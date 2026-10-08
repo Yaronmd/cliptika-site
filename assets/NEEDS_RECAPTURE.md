@@ -7,9 +7,8 @@ The homepage uses the manual review candidates in `assets/video/manual-candidate
 Paste and Cliptika Lens. The website crops their presentation in CSS while preserving each source
 file and its aspect ratio.
 
-`lens-quick-insert-manual.mp4` is retained untouched but is not currently referenced: Chrome
-reports “Unable to play media”, and an attempted non-destructive FFmpeg transcode recovered only
-one corrupt frame. A healthy replacement source is required before adding the Quick Insert toggle.
+`lens-quick-insert-manual.mp4` was regenerated from the approved original MOV on 2026-10-09 and
+is now a valid Chrome-compatible MP4 used by the homepage Quick Insert toggle.
 
 Before a production asset freeze, confirm the final Light and Dark masters for those clips. The
 current manual candidates are lightweight review/reference transcodes, as documented in their
