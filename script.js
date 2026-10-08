@@ -14,17 +14,23 @@ if (header && hero) {
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const allVideos = [...document.querySelectorAll('video')];
+function isInViewport(video) {
+  const rect = video.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+}
 function updateVideos() {
   allVideos.forEach((video) => {
     const panel = video.closest('[role="tabpanel"]');
     const hidden = panel?.hidden || video.closest('[hidden]');
-    const visible = video.dataset.inView === 'true';
+    const visible = isInViewport(video);
     if (!reduceMotion.matches && !hidden && visible) video.play().catch(() => {}); else video.pause();
   });
 }
 const videoObserver = new IntersectionObserver((entries) => { entries.forEach((entry) => entry.target.dataset.inView = entry.isIntersecting); updateVideos(); }, { threshold: .25 });
 allVideos.forEach((video) => videoObserver.observe(video));
 reduceMotion.addEventListener('change', updateVideos);
+addEventListener('scroll', updateVideos, { passive: true });
+addEventListener('resize', updateVideos);
 
 const tabs = [...document.querySelectorAll('[role="tab"]')];
 function activateTab(tab) {

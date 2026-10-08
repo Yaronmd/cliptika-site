@@ -1,17 +1,16 @@
-# Product micro-demos needing recapture
+# Archived video sources
 
-The existing Smart Paste and Cliptika Lens clips remain in `assets/video/` and are intentionally
-not used on the homepage in this iteration. Their surrounding TextEdit/Finder context is too wide
-to produce a professional close crop throughout each interaction without losing the action or
-result.
+The older automated captures in `assets/video/light/` and `assets/video/dark/` are retained as
+archive material only. They are not referenced by the homepage.
 
-Replace these with tightly framed, 3–5 second real-product micro-demos in Light and Dark:
+The homepage uses the manual review candidates in `assets/video/manual-candidates/` for Smart
+Paste and Cliptika Lens. The website crops their presentation in CSS while preserving each source
+file and its aspect ratio.
 
-- Smart Paste text transform and translation: minimal editor context, large readable Smart Paste
-  HUD, one action, and the visible result.
-- Lens Finder context: a controlled Finder selection, large readable Lens HUD, one action.
-- Lens Quick Insert: minimal editor context, Lens Quick Insert, and the inserted result.
+`lens-quick-insert-manual.mp4` is retained untouched but is not currently referenced: Chrome
+reports “Unable to play media”, and an attempted non-destructive FFmpeg transcode recovered only
+one corrupt frame. A healthy replacement source is required before adding the Quick Insert toggle.
 
-The close Lens image in `assets/images/*/lens-finder-context-close.png` is a static crop derived
-from the real Finder-context recording. It is only a temporary still for the current product
-showcase, not a substitute for the replacement micro-demo.
+Before a production asset freeze, confirm the final Light and Dark masters for those clips. The
+current manual candidates are lightweight review/reference transcodes, as documented in their
+directory's README.
