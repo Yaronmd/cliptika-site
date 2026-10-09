@@ -11,8 +11,9 @@ modified. The production clips are framed in the source encode rather than enlar
 ## Planned real captures
 
 - Capture workflow: Safari content → Cliptika area capture → image inserted into a Messages
-  composer. This will replace the temporary Capture tab placeholder and may be evaluated as a
-  future Hero-media candidate. Target edit: 5–6 seconds with a 1.5–2 second final-result hold.
+  composer is now integrated as `assets/video/production/capture-messages.mp4`. It remains a
+  possible future Hero-media candidate, but the current Smart Paste Hero is the stronger
+  first-impression visual.
 - Command Palette: a real capture is required before the visible development placeholder can be
   considered launch-ready.
 
