@@ -14,8 +14,8 @@ modified. The production clips are framed in the source encode rather than enlar
   composer is now integrated as `assets/video/production/capture-messages.mp4`. It remains a
   possible future Hero-media candidate, but the current Smart Paste Hero is the stronger
   first-impression visual.
-- Command Palette: a real capture is required before the visible development placeholder can be
-  considered launch-ready.
+- Lens: one controlled Copy -> Lens capture from the validated 0.4.0 build is pending; the site uses a real RC1 still meanwhile.
+- Smart Paste Remove Duplicate Lines recording on the release build (the live clip shows Title Case).
 
 ## Pending manual visual validation
 
