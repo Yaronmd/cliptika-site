@@ -12,3 +12,10 @@
 
 Not used (archive): `video/production/lens-finder.mp4`, `lens-quick-insert.mp4` (RC1, pre-Candidate-B Finder-context flow).
 Copy rules: no claim that the app is publicly available; no Projects / Automations / Workflows marketing; no GitHub link.
+
+## Preview redesign (branch `preview/hero-story-personas`) — where each asset is used
+- Hero sequence (one paced pass, then rests): 1 History screenshot (B) -> 2 Smart Paste Title Case recording (RC1, real) -> 3 Pins + Collections screenshot (B).
+- "Made for the way you work": Developers = Lens still; Creators = Pins screenshot; Researchers = Research Collection screenshot; Everyday = History screenshot. No simulated UI anywhere.
+- "A closer look" tabs: Smart Paste (translation + Title Case recordings), Pins & Collections (2 screenshots), Lens (still), Capture (RC1 recording).
+- Pro labels follow the verified Candidate B capability matrix (JSON, translation, region capture, Extract Text, image transforms, Open Terminal Here are Pro).
+- Known caveats to resolve with new media: the Lens still is an RC1 image (header reads "Selected File"; Candidate B copied-file Lens may word this differently); the Capture recording shows a third-party website (lego.com) - consider replacing it with neutral content.
