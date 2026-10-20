@@ -5,28 +5,53 @@
   const saveData = !!(navigator.connection && navigator.connection.saveData);
   const calm = () => reduceMotion.matches || saveData;
 
-  /* ---------- video players: Play demo -> Pause -> Resume -> Replay; one at a time ---------- */
+  /* ---------- video players ----------
+     ONE controller. The button label is DERIVED from the real <video> state on every media event, never set by hand:
+     idle -> "Play demo", loading -> "Loading…", playing -> "Pause", paused -> "Resume", ended -> "Replay".
+     Replay seeks to 0 and starts playback; a rejected play() promise is handled; only one video plays at a time. */
   const players = [...document.querySelectorAll('[data-vplayer]')];
-  function setState(p, state) {
-    const btn = p.querySelector('[data-vbtn]'), label = p.querySelector('.vl'), v = p.querySelector('video');
-    const text = { idle: 'Play demo', playing: 'Pause', paused: 'Resume', ended: 'Replay' }[state];
-    btn.dataset.state = state; label.textContent = text;
-    btn.setAttribute('aria-label', `${text}: ${v.getAttribute('aria-label')}`);
+  const interactionHooks = [];                                 // the hero timeline stops auto-advancing when a person touches the video
+  const LABEL = { idle: 'Play demo', loading: 'Loading…', playing: 'Pause', paused: 'Resume', ended: 'Replay' };
+  const playerOf = (v) => players.find((p) => p.querySelector('video') === v);
+  function stateOf(v) {
+    if (v.ended) return 'ended';
+    if (!v.paused) return (v.readyState >= 3 && !v.seeking) ? 'playing' : 'loading';
+    return v.currentTime > 0.05 ? 'paused' : 'idle';
+  }
+  function sync(p) {
+    const v = p.querySelector('video'), btn = p.querySelector('[data-vbtn]'), s = stateOf(v);
+    btn.dataset.state = s; p.querySelector('.vl').textContent = LABEL[s];
+    btn.setAttribute('aria-label', `${LABEL[s]}: ${v.getAttribute('aria-label')}`);
+    btn.setAttribute('aria-busy', String(s === 'loading'));
+    p.querySelector('.vprog').style.setProperty('--vp', (v.duration ? v.currentTime / v.duration * 100 : 0) + '%');
   }
   function pauseAllExcept(keep) { players.forEach((p) => { const v = p.querySelector('video'); if (v !== keep && !v.paused) v.pause(); }); }
+  // Seeking needs a seekable resource. Servers without HTTP Range support (e.g. `python3 -m http.server`) leave the video unseekable, so
+  // currentTime = 0 can stall or be ignored; in that case reload the source, which always restarts from the beginning.
+  function canSeekTo(v, t) { try { const n = v.seekable.length; return n > 0 && v.seekable.end(n - 1) >= Math.min(t + 0.1, v.duration || t + 0.1); } catch (e) { return false; } }
+  function rewind(v) { if (v.readyState >= 1 && canSeekTo(v, 0.1)) { try { v.currentTime = 0; return; } catch (e) { /* fall through to reload */ } } v.load(); }
+  function startPlayback(v, { restart = false } = {}) {        // used by the button, the hero timeline and manual story selection
+    const p = playerOf(v); pauseAllExcept(v); v.preload = 'auto';
+    if (restart || v.ended) rewind(v);
+    const pr = v.play();
+    if (pr && pr.catch) pr.catch((err) => {
+      if (err && err.name === 'AbortError') v.addEventListener('canplay', () => v.play().catch(() => p && sync(p)), { once: true });   // interrupted by a seek/load: retry once
+      if (p) sync(p);                                                                                                                  // NotAllowedError etc.: fall back to a truthful "Play demo"
+    });
+    if (p) sync(p);
+  }
+  function resetPlayer(v) { const p = playerOf(v); v.pause(); if (v.currentTime > 0.05 || v.ended) rewind(v); if (p) sync(p); }
   players.forEach((p) => {
-    const v = p.querySelector('video'), btn = p.querySelector('[data-vbtn]'), prog = p.querySelector('.vprog');
+    const v = p.querySelector('video'), btn = p.querySelector('[data-vbtn]');
     v.loop = false;
     btn.addEventListener('click', () => {
-      if (btn.dataset.state === 'playing') { v.pause(); return; }
-      if (btn.dataset.state === 'ended') v.currentTime = 0;
-      v.preload = 'auto'; pauseAllExcept(v); v.play().catch(() => setState(p, 'idle'));
+      interactionHooks.forEach((h) => h(v));
+      if (!v.paused && !v.ended) { v.pause(); return; }
+      startPlayback(v, { restart: v.ended });
     });
-    v.addEventListener('play', () => { pauseAllExcept(v); setState(p, 'playing'); });
-    v.addEventListener('pause', () => { if (!v.ended) setState(p, v.currentTime > 0 ? 'paused' : 'idle'); });
-    v.addEventListener('ended', () => { setState(p, 'ended'); prog.style.setProperty('--vp', '100%'); });
-    v.addEventListener('timeupdate', () => { if (v.duration) prog.style.setProperty('--vp', (v.currentTime / v.duration * 100) + '%'); });
-    setState(p, 'idle');
+    ['play', 'playing', 'pause', 'ended', 'waiting', 'seeking', 'seeked', 'canplay', 'loadeddata', 'emptied', 'stalled', 'error'].forEach((e) => v.addEventListener(e, () => sync(p)));
+    v.addEventListener('timeupdate', () => sync(p));
+    sync(p);
   });
   const stopVideosWithin = (root) => root && root.querySelectorAll('video').forEach((v) => v.pause());
 
@@ -68,14 +93,14 @@
       steps.forEach((s, i) => i === sc ? s.setAttribute('aria-current', 'true') : s.removeAttribute('aria-current'));
       scenes.forEach((s, i) => s.classList.toggle('is-active', i === sc));
       if (sc === 2) showSub(b - 2);
-      if (sc !== 0 && video && !video.paused) video.pause();
+      if (sc !== 0 && video) resetPlayer(video);                           // leaving the Smart Paste story: stop AND rewind, so returning is consistent
       caption.textContent = captions[b];
     }
     function schedule(ms) { clear(); dur = ms; t0 = performance.now(); elapsed = 0; timer = setTimeout(next, ms); }
     function playVideoBeat() {
-      resetBars(); video.currentTime = 0;
-      const p = video.play(); if (p && p.catch) p.catch(() => {});
-      schedule(VIDEO_FALLBACK_MS);                                         // safety net; 'ended' normally moves on sooner
+      resetBars();
+      startPlayback(video, { restart: true });
+      schedule(VIDEO_FALLBACK_MS);                                         // safety net (also covers a rejected autoplay); 'ended' normally moves on sooner
     }
     function playBeat(b) {
       show(b);
@@ -88,7 +113,7 @@
       if (beat >= 4) { finished = true; clear(); setBar(2, 1, 0); return; }  // one pass, then rest
       playBeat(beat + 1);
     }
-    video?.addEventListener('ended', () => { if (beat === 0 && !takenOver && started) { clear(); setBar(0, 1, 0); timer = setTimeout(next, VIDEO_TAIL_MS); } });
+    video?.addEventListener('ended', () => { if (beat === 0 && !takenOver && started && !userPaused) { clear(); setBar(0, 1, 0); timer = setTimeout(next, VIDEO_TAIL_MS); } });
     video?.addEventListener('timeupdate', () => { if (beat === 0 && !takenOver && video.duration) setBar(0, video.currentTime / video.duration, 0); });
     function pauseNow() {
       if (!timer) return; elapsed = performance.now() - t0; clear();
@@ -98,7 +123,7 @@
     }
     function resumeNow() {
       if (finished || takenOver || userPaused || !inView || calm()) return;
-      if (beat === 0) { if (!video.ended) { video.play().catch(() => {}); schedule(Math.max(1500, VIDEO_FALLBACK_MS - elapsed)); } return; }
+      if (beat === 0) { if (!video.ended) { startPlayback(video); schedule(Math.max(1500, VIDEO_FALLBACK_MS - elapsed)); } return; }
       const sc = sceneOf(beat), left = Math.max(300, dur - elapsed);
       let more = 0; for (let k = beat + 1; k <= 4 && sceneOf(k) === sc; k++) more += MS[k];
       setTimeout(() => setBar(sc, 1, left + more), 40); schedule(left);
@@ -106,10 +131,11 @@
     function start() { if (started || calm()) return; started = true; if (video) { video.preload = 'auto'; video.load(); } playBeat(0); }
     function takeOver(b) {                                                  // a person chose something: stop auto-advance for good
       takenOver = true; finished = false; clear(); resetBars();
-      if (video && sceneOf(b) !== 0) video.pause();
-      show(b);
+      show(b);                                                              // show() rewinds the video when leaving story 1
+      if (sceneOf(b) === 0 && video) { resetPlayer(video); if (!calm()) startPlayback(video, { restart: true }); }
     }
-    steps.forEach((s, i) => s.addEventListener('click', () => { takeOver(i === 2 ? 2 : i); if (i === 0 && video) { video.preload = 'auto'; video.currentTime = 0; if (!calm()) video.play().catch(() => {}); } }));
+    interactionHooks.push((v) => { if (v === video) { takenOver = true; clear(); resetBars(); } });   // touching the video hands control to the person: no surprise scene change
+    steps.forEach((s, i) => s.addEventListener('click', () => takeOver(i === 2 ? 2 : i)));
     subBtns.forEach((b, i) => b.addEventListener('click', () => takeOver(2 + i)));
     pauseBtn?.addEventListener('click', () => {
       userPaused = !userPaused; pauseBtn.setAttribute('aria-pressed', String(userPaused));
@@ -122,7 +148,7 @@
     }
     setTimeout(() => { if (ioFired) return; const r = stageEl.getBoundingClientRect(); inView = r.top < innerHeight * 0.7 && r.bottom > innerHeight * 0.3; if (inView) start(); }, 1200);
     document.addEventListener('visibilitychange', () => document.hidden ? pauseNow() : resumeNow());
-    reduceMotion.addEventListener('change', () => { if (calm()) { pauseNow(); clear(); resetBars(); if (video) video.pause(); } });
+    reduceMotion.addEventListener('change', () => { if (calm()) { pauseNow(); clear(); resetBars(); if (video) resetPlayer(video); } });
     show(0);
     if (calm()) pauseBtn.hidden = true;                                     // nothing auto-plays, so nothing to pause
   }
