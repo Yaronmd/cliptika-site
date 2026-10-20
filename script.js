@@ -31,7 +31,7 @@
   function setupKeys(p) {
     const cues = parseCues(p); if (!cues.length && !cueDebug) return;
     const v = p.querySelector('video'), el = document.createElement('div');
-    el.className = 'vkeys'; el.setAttribute('aria-hidden', 'true'); p.appendChild(el);
+    el.className = 'vkeys'; el.setAttribute('aria-hidden', 'true'); (p.querySelector('.vclip') || p).appendChild(el);   // sits on the footage itself
     p._keys = { cues, el, cur: -1, loop: 0 };
     if (cues.length) {                                                        // text alternative for assistive technology
       const sr = document.createElement('p'); sr.className = 'sr-only'; sr.id = (v.id || 'demo') + '-keys';
@@ -39,7 +39,7 @@
       p.appendChild(sr); v.setAttribute('aria-describedby', [v.getAttribute('aria-describedby'), sr.id].filter(Boolean).join(' '));
     }
     if (cueDebug) {
-      const d = document.createElement('div'); d.className = 'vdebug'; d.setAttribute('aria-hidden', 'true'); p.appendChild(d); p._keys.dbg = d;
+      const d = document.createElement('div'); d.className = 'vdebug'; d.setAttribute('aria-hidden', 'true'); (p.querySelector('.vclip') || p).appendChild(d); p._keys.dbg = d;
       p.tabIndex = 0; p.addEventListener('keydown', (e) => { if (e.key === ',' || e.key === '.') { v.pause(); v.currentTime = Math.max(0, v.currentTime + (e.key === '.' ? 1 : -1) / 30); e.preventDefault(); } });
     }
     const frame = () => { renderKeys(p); if (!v.paused && !v.ended) p._keys.loop = (v.requestVideoFrameCallback ? v.requestVideoFrameCallback(frame) : requestAnimationFrame(frame)); };
@@ -106,7 +106,7 @@
     v.addEventListener('timeupdate', () => sync(p));
     sync(p);
   });
-  const stopVideosWithin = (root) => root && root.querySelectorAll('video').forEach((v) => v.pause());
+  const stopVideosWithin = (root) => root && root.querySelectorAll('video').forEach((v) => resetPlayer(v));      // leaving a demo: stop AND rewind, so returning is consistent
 
   /* ---------- hero: Smart Paste video -> Capture -> Save & find (Pins, Collections, Search) ---------- */
   const story = document.querySelector('[data-story]');
@@ -223,6 +223,7 @@
     const items = [...listEl.querySelectorAll(`:scope > ${tabSel}`)];
     if (!items.length) return;
     const prev = vertical ? 'ArrowUp' : 'ArrowLeft', nxt = vertical ? 'ArrowDown' : 'ArrowRight';
+    let userSelected = false;
     function select(tab, focus) {
       items.forEach((t) => {
         const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
@@ -231,14 +232,16 @@
       });
       if (focus) tab.focus();
       onSelect?.(tab, document.getElementById(tab.getAttribute('aria-controls')));
+      const panel = document.getElementById(tab.getAttribute('aria-controls')), pv = panel && [...panel.querySelectorAll('video')].find((x) => x.getClientRects().length);
+      if (pv && userSelected && !calm()) startPlayback(pv, { restart: true });     // an explicit choice starts that demo (never on page load)
     }
     items.forEach((t, i) => {
-      t.addEventListener('click', () => select(t, false));
+      t.addEventListener('click', () => { userSelected = true; select(t, false); });
       t.addEventListener('keydown', (e) => {
         if (![prev, nxt, 'Home', 'End'].includes(e.key)) return;
         e.preventDefault();
         const n = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 : (i + (e.key === nxt ? 1 : -1) + items.length) % items.length;
-        select(items[n], true);
+        userSelected = true; select(items[n], true);
       });
     });
   }

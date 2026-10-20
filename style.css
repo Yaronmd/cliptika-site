@@ -87,9 +87,9 @@ kbd{font:600 .82em/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:.2em .4
 @media(prefers-reduced-motion:reduce){.stage-deck .sub{transition:none}.case-media[role=tabpanel]:not([hidden]),.persona-panel{animation:none}.vbtn{transition:none}}
 
 /* JSON example: real input and the exact JSON Pretty output, shown as text (not a Cliptika window) */
-.codepair{display:grid;gap:0;background:var(--surface2)}.cp{min-width:0;padding:12px 14px}.cp+.cp{border-top:1px solid var(--border)}.cp-l{display:block;margin:0 0 6px;color:var(--text3);font-size:11px;font-weight:720;letter-spacing:.05em;text-transform:uppercase}.cp pre{margin:0;overflow:auto;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}.cp code{font:inherit;white-space:pre}
+.cp+.cp-l{display:block;margin:0 0 6px;color:var(--text3);font-size:11px;font-weight:720;letter-spacing:.05em;text-transform:uppercase}
 
-@media(min-width:761px){.codepair{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.cp+.cp{border-top:0;border-left:1px solid var(--border)}.cp pre{font-size:12px}.cp:first-child pre,.cp:first-child code{white-space:pre-wrap;word-break:break-word}}
+@media(min-width:761px){.cp+}
 
 /* phones: the wide recording is shown 2:1, cropping only empty right-hand margin, so the Smart Paste menu and the text stay legible */
 @media(max-width:760px){.hero-video .vframe{aspect-ratio:2/1}.hero-video .vframe video{object-fit:cover;object-position:0% 50%}.hero-video .vbtn{top:8px;bottom:auto;right:8px;padding:6px 11px 6px 9px;font-size:12px}}
@@ -111,7 +111,7 @@ kbd{font:600 .82em/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:.2em .4
 .case-media>picture,.case-media>.still{min-height:0;display:grid;place-items:center;overflow:hidden;background:var(--surface2);padding:clamp(8px,1.6vw,16px)}
 .case-media>picture img,.case-media>.still{width:100%;height:100%;object-fit:contain;border-radius:10px}
 .case-media>picture img{border:1px solid var(--border);box-shadow:0 8px 22px rgba(20,18,34,.12)}
-.case-media>.how,.case-media>.codepair,.case-media>.ba{min-height:0;overflow:auto}
+.case-media>.how,.case-media>.ba{min-height:0;overflow:auto}
 .case-media>figcaption{grid-row:2}
 @media(min-width:1021px){.case-stage{aspect-ratio:1500/1060}}
 @media(max-width:1020px){.case-stage{min-height:420px;order:-1}.persona-panel{align-items:start}}
@@ -166,3 +166,10 @@ kbd{font:600 .82em/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:.2em .4
 @media(max-width:760px){:root{--vk-size:26px}.vkeys{padding:5px 6px;gap:4px;border-radius:12px;max-width:calc(100% - 16px)}.vkeys--bl,.vkeys--br,.vkeys--bc{bottom:8px}.vkeys--bl,.vkeys--tl{left:8px}.vk{font-size:13.5px;padding:0 5px;border-radius:7px}.vk-word{font-size:11.5px}.vk-label{font-size:11px;margin:0 2px 0 4px}}
 @media(max-width:380px){.vk-label{display:none}}
 @media(prefers-reduced-motion:reduce){.vkeys{transition:none;transform:none}.vkeys.is-on .vk{animation:none}}
+
+/* real demo videos inside the shared media stage: same tile treatment as screenshots, centred, aspect preserved; the control sits BELOW the footage so it never covers the real UI */
+.case-media>.vstage{min-height:0;display:grid;align-content:center;gap:10px;background:var(--surface2);padding:clamp(8px,1.6vw,16px)}
+.vclip{position:relative;width:100%;aspect-ratio:1600/724;border-radius:10px;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 22px rgba(20,18,34,.16);background:#111}
+.vclip .vframe{height:100%;background:#111}
+.vclip .vframe video{width:100%;height:100%;object-fit:contain}
+.vstage .vbtn{position:static;justify-self:end;top:auto;right:auto;bottom:auto}
