@@ -149,3 +149,20 @@ kbd{font:600 .82em/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:.2em .4
 .stage-deck .sub.is-active{transition-delay:0s}
 @media(prefers-reduced-motion:reduce){.stage-deck .sub{transition:none}}
 .how-line{margin:0;font-size:.98rem;line-height:1.5;color:var(--text)}
+
+/* ===== keyboard-shortcut overlay (reusable, per-video cues; see script.js) ===== */
+:root{--vk-bg:rgba(22,21,28,.88);--vk-border:rgba(255,255,255,.24);--vk-cap:rgba(255,255,255,.14);--vk-cap-edge:rgba(255,255,255,.26);--vk-text:#fff;--vk-size:30px}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.vplayer{position:relative}
+.vkeys{position:absolute;z-index:2;display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid var(--vk-border);border-radius:14px;background:var(--vk-bg);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 8px 24px rgba(10,9,16,.28),inset 0 1px 0 rgba(255,255,255,.1);color:var(--vk-text);pointer-events:none;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .16s ease,transform .16s ease,visibility 0s .16s}
+.vkeys.is-on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.vkeys--bl{left:12px;bottom:14px}.vkeys--br{right:12px;bottom:14px}.vkeys--tl{left:12px;top:12px}.vkeys--tr{right:12px;top:12px}.vkeys--bc{left:50%;bottom:14px;margin-left:0;translate:-50% 0}
+.vk{display:inline-grid;place-items:center;min-width:var(--vk-size);height:var(--vk-size);padding:0 7px;border:1px solid var(--vk-cap-edge);border-bottom-width:2px;border-radius:8px;background:var(--vk-cap);color:var(--vk-text);font:600 15px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.vk-word{font-size:12.5px;letter-spacing:.01em;padding:0 10px}
+.vk-label{margin:0 4px 0 6px;font:600 12px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;letter-spacing:.02em;color:rgba(255,255,255,.82);white-space:nowrap}
+.vkeys.is-on .vk{animation:vkpress .22s ease-out both}
+@keyframes vkpress{0%{transform:translateY(0) scale(1)}35%{transform:translateY(1px) scale(.94)}100%{transform:none}}
+.vdebug{position:absolute;left:8px;top:8px;z-index:3;padding:3px 7px;border-radius:6px;background:#000;color:#0f0;font:600 12px ui-monospace,Menlo,monospace;pointer-events:none}
+@media(max-width:760px){:root{--vk-size:26px}.vkeys{padding:5px 6px;gap:4px;border-radius:12px;max-width:calc(100% - 16px)}.vkeys--bl,.vkeys--br,.vkeys--bc{bottom:8px}.vkeys--bl,.vkeys--tl{left:8px}.vk{font-size:13.5px;padding:0 5px;border-radius:7px}.vk-word{font-size:11.5px}.vk-label{font-size:11px;margin:0 2px 0 4px}}
+@media(max-width:380px){.vk-label{display:none}}
+@media(prefers-reduced-motion:reduce){.vkeys{transition:none;transform:none}.vkeys.is-on .vk{animation:none}}

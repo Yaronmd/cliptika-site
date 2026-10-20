@@ -9,6 +9,58 @@
      ONE controller. The button label is DERIVED from the real <video> state on every media event, never set by hand:
      idle -> "Play demo", loading -> "Loading…", playing -> "Pause", paused -> "Resume", ended -> "Replay".
      Replay seeks to 0 and starts playback; a rejected play() promise is handled; only one video plays at a time. */
+  /* ---------- keyboard-shortcut overlay ----------
+     Per-video metadata on the player:  data-cues='[{"t":0.55,"d":1.3,"keys":["⌥","V"],"label":"Smart Paste","pos":"bl"}]'
+       t = second the shortcut is pressed in THAT recording, d = how long to show it, keys = glyph tokens, pos = bl|br|tl|tr|bc (default bl).
+     The overlay is STATELESS: whether a cue shows is derived from video.currentTime on every frame/event, so Replay, Pause, Resume, seeking,
+     switching demos and reloads can never leave it out of sync. It is decorative (aria-hidden); the same shortcut is exposed to assistive
+     technology as text. Add ?cuedebug=1 to the URL for a frame-accurate time readout (and , / . to step one frame) while authoring cues. */
+  const MODS = { '⌃': 'Control', '⌥': 'Option', '⇧': 'Shift', '⌘': 'Command' };
+  const MOD_ORDER = '⌃⌥⇧⌘';                                      // macOS order
+  const KEY_SPEAK = { '↩': 'Return', '⎋': 'Escape', '⇥': 'Tab', '⌫': 'Delete', '↑': 'Up Arrow', '↓': 'Down Arrow', '←': 'Left Arrow', '→': 'Right Arrow', Space: 'Space' };
+  const ORDER = (k) => { const i = MOD_ORDER.indexOf(k); return i < 0 ? 99 : i; };
+  const cueDebug = /[?&]cuedebug\b/.test(location.search);
+  function parseCues(p) {
+    let raw = []; try { raw = JSON.parse(p.dataset.cues || '[]'); } catch (e) { raw = []; }
+    return raw.filter((c) => c && c.keys && c.keys.length && isFinite(c.t) && isFinite(c.d) && c.d > 0)
+      .map((c) => ({ t: +c.t, d: +c.d, label: c.label || '', pos: ['bl', 'br', 'tl', 'tr', 'bc'].includes(c.pos) ? c.pos : 'bl',
+        keys: [...c.keys].sort((a, b) => ORDER(a) - ORDER(b)) }))
+      .sort((a, b) => a.t - b.t);
+  }
+  const speak = (c) => c.keys.map((k) => MODS[k] || KEY_SPEAK[k] || k).join(' ') + (c.label ? ` (${c.label})` : '');
+  function setupKeys(p) {
+    const cues = parseCues(p); if (!cues.length && !cueDebug) return;
+    const v = p.querySelector('video'), el = document.createElement('div');
+    el.className = 'vkeys'; el.setAttribute('aria-hidden', 'true'); p.appendChild(el);
+    p._keys = { cues, el, cur: -1, loop: 0 };
+    if (cues.length) {                                                        // text alternative for assistive technology
+      const sr = document.createElement('p'); sr.className = 'sr-only'; sr.id = (v.id || 'demo') + '-keys';
+      sr.textContent = 'Keyboard shortcuts shown in this demo: ' + cues.map(speak).join('; ') + '.';
+      p.appendChild(sr); v.setAttribute('aria-describedby', [v.getAttribute('aria-describedby'), sr.id].filter(Boolean).join(' '));
+    }
+    if (cueDebug) {
+      const d = document.createElement('div'); d.className = 'vdebug'; d.setAttribute('aria-hidden', 'true'); p.appendChild(d); p._keys.dbg = d;
+      p.tabIndex = 0; p.addEventListener('keydown', (e) => { if (e.key === ',' || e.key === '.') { v.pause(); v.currentTime = Math.max(0, v.currentTime + (e.key === '.' ? 1 : -1) / 30); e.preventDefault(); } });
+    }
+    const frame = () => { renderKeys(p); if (!v.paused && !v.ended) p._keys.loop = (v.requestVideoFrameCallback ? v.requestVideoFrameCallback(frame) : requestAnimationFrame(frame)); };
+    v.addEventListener('playing', () => { cancelAnimationFrame(p._keys.loop); frame(); });
+  }
+  function renderKeys(p) {
+    const st = p._keys; if (!st) return;
+    const v = p.querySelector('video'), t = v.currentTime || 0;
+    if (st.dbg) st.dbg.textContent = t.toFixed(3) + ' s · ' + (v.paused ? 'paused' : 'playing');
+    let i = -1; for (let k = 0; k < st.cues.length; k++) { if (t >= st.cues[k].t && t < st.cues[k].t + st.cues[k].d) { i = k; break; } }
+    if (i === st.cur) return;
+    st.cur = i;
+    if (i >= 0) {                                                             // content stays in place while fading out, so there is no empty flash
+      const c = st.cues[i]; st.el.className = 'vkeys vkeys--' + c.pos; st.el.replaceChildren();
+      c.keys.forEach((k) => { const kc = document.createElement('kbd'); kc.className = 'vk' + (k.length > 1 ? ' vk-word' : ''); kc.textContent = k; st.el.appendChild(kc); });
+      if (c.label) { const l = document.createElement('span'); l.className = 'vk-label'; l.textContent = c.label; st.el.appendChild(l); }
+      void st.el.offsetWidth;                                                 // restart the entrance for each cue
+      st.el.classList.add('is-on');
+    } else st.el.classList.remove('is-on');
+  }
+
   const players = [...document.querySelectorAll('[data-vplayer]')];
   const interactionHooks = [];                                 // the hero timeline stops auto-advancing when a person touches the video
   const LABEL = { idle: 'Play demo', loading: 'Loading…', playing: 'Pause', paused: 'Resume', ended: 'Replay' };
@@ -24,6 +76,7 @@
     btn.setAttribute('aria-label', `${LABEL[s]}: ${v.getAttribute('aria-label')}`);
     btn.setAttribute('aria-busy', String(s === 'loading'));
     p.querySelector('.vprog').style.setProperty('--vp', (v.duration ? v.currentTime / v.duration * 100 : 0) + '%');
+    renderKeys(p);
   }
   function pauseAllExcept(keep) { players.forEach((p) => { const v = p.querySelector('video'); if (v !== keep && !v.paused) v.pause(); }); }
   // Seeking needs a seekable resource. Servers without HTTP Range support (e.g. `python3 -m http.server`) leave the video unseekable, so
@@ -43,7 +96,7 @@
   function resetPlayer(v) { const p = playerOf(v); v.pause(); if (v.currentTime > 0.05 || v.ended) rewind(v); if (p) sync(p); }
   players.forEach((p) => {
     const v = p.querySelector('video'), btn = p.querySelector('[data-vbtn]');
-    v.loop = false;
+    v.loop = false; setupKeys(p);
     btn.addEventListener('click', () => {
       interactionHooks.forEach((h) => h(v));
       if (!v.paused && !v.ended) { v.pause(); return; }
