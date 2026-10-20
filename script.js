@@ -30,7 +30,7 @@
   });
   const stopVideosWithin = (root) => root && root.querySelectorAll('video').forEach((v) => v.pause());
 
-  /* ---------- hero ---------- */
+  /* ---------- hero: Smart Paste video -> Capture -> Save & find (Pins, Collections, Search) ---------- */
   const story = document.querySelector('[data-story]');
   if (story) {
     const steps = [...story.querySelectorAll('.story-step')];
@@ -40,16 +40,20 @@
     const caption = story.querySelector('[data-caption]');
     const pauseBtn = story.querySelector('[data-pause]');
     const stageEl = story.querySelector('[data-stage]');
+    const video = story.querySelector('[data-hero-video]');
     const captions = [
-      'Clipboard History — everything you copied, searchable and ready to reuse.',
-      'Capture — press ⌥⇧S, drag over an area, and it is on your clipboard. Real recording coming soon.',
-      'Pins — keep the things you reuse one click away.',
-      'Collections — group related clips, in the order you choose.'
+      'Smart Paste — copy, press ⌥V, choose an action, and it pastes straight in.',
+      'Capture — press ⌥⇧S, drag over an area, and it is on your clipboard. Demo recording coming soon.',
+      'Pins — keep what you reuse one click away.',
+      'Collections — group related clips, in the order you choose.',
+      'Search — find anything you copied, in seconds.'
     ];
-    const MS = { 0: 4800, 1: 3800, 2: 3300, 3: 3300 };   // 2 = pins view, 3 = collections view (both are scene 2)
+    const MS = [0, 3600, 3000, 3000, 3000];            // beat 0 is the video (ends with the video); beats 2-4 are the three Save & find views
+    const VIDEO_FALLBACK_MS = 9000, VIDEO_TAIL_MS = 900;
+    const sceneOf = (b) => (b >= 2 ? 2 : b);
+    const sceneTotal = (sc) => (sc === 2 ? MS[2] + MS[3] + MS[4] : MS[sc]);
     let beat = 0, timer = null, started = false, finished = false, userPaused = false, takenOver = false, inView = false;
     let t0 = 0, dur = 0, elapsed = 0;
-    const sceneOf = (b) => (b >= 2 ? 2 : b);
     const bar = (i) => steps[i].querySelector('.step-bar');
     const setBar = (i, p, ms) => { const b = bar(i); b.style.transition = ms ? `transform ${ms}ms linear` : 'none'; b.style.transform = `scaleX(${p})`; };
     const resetBars = () => steps.forEach((_, i) => setBar(i, 0, 0));
@@ -64,34 +68,49 @@
       steps.forEach((s, i) => i === sc ? s.setAttribute('aria-current', 'true') : s.removeAttribute('aria-current'));
       scenes.forEach((s, i) => s.classList.toggle('is-active', i === sc));
       if (sc === 2) showSub(b - 2);
+      if (sc !== 0 && video && !video.paused) video.pause();
       caption.textContent = captions[b];
     }
     function schedule(ms) { clear(); dur = ms; t0 = performance.now(); elapsed = 0; timer = setTimeout(next, ms); }
+    function playVideoBeat() {
+      resetBars(); video.currentTime = 0;
+      const p = video.play(); if (p && p.catch) p.catch(() => {});
+      schedule(VIDEO_FALLBACK_MS);                                         // safety net; 'ended' normally moves on sooner
+    }
     function playBeat(b) {
       show(b);
-      if (b === 0 || b === 1) resetBars();
-      if (b === 2) setBar(2, 0, 0);
-      const total = b === 2 ? MS[2] + MS[3] : MS[b];
-      if (b === 3) { /* continue the bar started at beat 2 */ } else { setTimeout(() => setBar(sceneOf(b), 1, total), 40); }
+      if (b === 0) { playVideoBeat(); return; }
+      if (b === 1) { resetBars(); setTimeout(() => setBar(1, 1, MS[1]), 40); }
+      if (b === 2) { resetBars(); setTimeout(() => setBar(2, 1, sceneTotal(2)), 40); }
       schedule(MS[b]);
     }
     function next() {
-      if (beat >= 3) { finished = true; clear(); setBar(2, 1, 0); return; }          // one pass, then rest
+      if (beat >= 4) { finished = true; clear(); setBar(2, 1, 0); return; }  // one pass, then rest
       playBeat(beat + 1);
     }
-    function pauseNow() { if (!timer) return; elapsed = performance.now() - t0; clear(); const i = sceneOf(beat); const b = bar(i); const w = b.getBoundingClientRect().width, full = b.parentElement.getBoundingClientRect().width; setBar(i, full ? Math.min(1, w / full) : 0, 0); }
+    video?.addEventListener('ended', () => { if (beat === 0 && !takenOver && started) { clear(); setBar(0, 1, 0); timer = setTimeout(next, VIDEO_TAIL_MS); } });
+    video?.addEventListener('timeupdate', () => { if (beat === 0 && !takenOver && video.duration) setBar(0, video.currentTime / video.duration, 0); });
+    function pauseNow() {
+      if (!timer) return; elapsed = performance.now() - t0; clear();
+      if (beat === 0) { video.pause(); return; }
+      const sc = sceneOf(beat), b = bar(sc); const w = b.getBoundingClientRect().width, full = b.parentElement.getBoundingClientRect().width;
+      setBar(sc, full ? Math.min(1, w / full) : 0, 0);
+    }
     function resumeNow() {
       if (finished || takenOver || userPaused || !inView || calm()) return;
-      const left = Math.max(300, dur - elapsed); const i = sceneOf(beat);
-      const remainingBeats = beat === 2 ? MS[3] : 0;
-      setTimeout(() => setBar(i, 1, left + remainingBeats), 40); schedule(left);
+      if (beat === 0) { if (!video.ended) { video.play().catch(() => {}); schedule(Math.max(1500, VIDEO_FALLBACK_MS - elapsed)); } return; }
+      const sc = sceneOf(beat), left = Math.max(300, dur - elapsed);
+      let more = 0; for (let k = beat + 1; k <= 4 && sceneOf(k) === sc; k++) more += MS[k];
+      setTimeout(() => setBar(sc, 1, left + more), 40); schedule(left);
     }
-    function start() { if (started || calm()) return; started = true; playBeat(0); }
-    function takeOver(i) {                                         // a person chose a story: stop auto-advance for good
-      takenOver = true; clear(); resetBars(); show(i === 2 ? 2 : i);
+    function start() { if (started || calm()) return; started = true; if (video) { video.preload = 'auto'; video.load(); } playBeat(0); }
+    function takeOver(b) {                                                  // a person chose something: stop auto-advance for good
+      takenOver = true; finished = false; clear(); resetBars();
+      if (video && sceneOf(b) !== 0) video.pause();
+      show(b);
     }
-    steps.forEach((s, i) => s.addEventListener('click', () => takeOver(i)));
-    subBtns.forEach((b, i) => b.addEventListener('click', () => { takenOver = true; clear(); resetBars(); show(2 + i); }));
+    steps.forEach((s, i) => s.addEventListener('click', () => { takeOver(i === 2 ? 2 : i); if (i === 0 && video) { video.preload = 'auto'; video.currentTime = 0; if (!calm()) video.play().catch(() => {}); } }));
+    subBtns.forEach((b, i) => b.addEventListener('click', () => takeOver(2 + i)));
     pauseBtn?.addEventListener('click', () => {
       userPaused = !userPaused; pauseBtn.setAttribute('aria-pressed', String(userPaused));
       pauseBtn.setAttribute('aria-label', userPaused ? 'Resume the sequence' : 'Pause the sequence');
@@ -103,9 +122,9 @@
     }
     setTimeout(() => { if (ioFired) return; const r = stageEl.getBoundingClientRect(); inView = r.top < innerHeight * 0.7 && r.bottom > innerHeight * 0.3; if (inView) start(); }, 1200);
     document.addEventListener('visibilitychange', () => document.hidden ? pauseNow() : resumeNow());
-    reduceMotion.addEventListener('change', () => { if (calm()) { pauseNow(); clear(); resetBars(); } });
+    reduceMotion.addEventListener('change', () => { if (calm()) { pauseNow(); clear(); resetBars(); if (video) video.pause(); } });
     show(0);
-    if (calm()) pauseBtn.hidden = true;                            // nothing auto-plays, so nothing to pause
+    if (calm()) pauseBtn.hidden = true;                                     // nothing auto-plays, so nothing to pause
   }
 
   /* ---------- accessible tablists ---------- */
@@ -134,14 +153,5 @@
   }
   document.querySelectorAll('.persona-tabs').forEach((l) => tablist(l, '.persona-tab', { onSelect: (_, panel) => { document.querySelectorAll('.persona-panel').forEach((p) => { if (p !== panel) stopVideosWithin(p); }); } }));
   document.querySelectorAll('.case-list').forEach((l) => tablist(l, '.case', { vertical: true }));
-  document.querySelectorAll('.tabs').forEach((l) => tablist(l, '.tab'));
 
-  /* ---------- two-way switch (Smart Paste: change case / translate) ---------- */
-  document.querySelectorAll('[data-switch]').forEach((group) => {
-    const buttons = [...group.querySelectorAll('button')];
-    buttons.forEach((b) => b.addEventListener('click', () => {
-      buttons.forEach((x) => { const on = x === b; x.classList.toggle('is-active', on); x.setAttribute('aria-pressed', String(on)); });
-      document.querySelectorAll('.switch-pane').forEach((p) => { const on = p.id === b.dataset.target; p.hidden = !on; if (!on) stopVideosWithin(p); });
-    }));
-  });
 })();
