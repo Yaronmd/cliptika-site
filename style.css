@@ -93,3 +93,59 @@ kbd{font:600 .82em/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:.2em .4
 
 /* phones: the wide recording is shown 2:1, cropping only empty right-hand margin, so the Smart Paste menu and the text stay legible */
 @media(max-width:760px){.hero-video .vframe{aspect-ratio:2/1}.hero-video .vframe video{object-fit:cover;object-position:0% 50%}.hero-video .vbtn{top:8px;bottom:auto;right:8px;padding:6px 11px 6px 9px;font-size:12px}}
+
+/* inactive scenes must never catch pointer events (an invisible Pins image once sat on top of the video's Replay button) */
+.scene:not(.is-active){pointer-events:none}.scene:not(.is-active) .sub,.scene:not(.is-active) .sub-dots{visibility:hidden!important;pointer-events:none}
+
+/* ===== Final UX corrections (preview-16) ===== */
+/* contrast: secondary copy must reach WCAG AA (4.5:1) on both themes */
+:root{--text3:#68666f}
+@media(prefers-color-scheme:dark){:root{--text3:#a09eac}}
+.case-t>span,.gap-kicker,.plan ul{color:var(--text2)}
+.case-media figcaption,.compat,.pro-note,.step-t small{color:var(--text3);font-size:13px}
+/* stable media stage: every task in every persona/tool list shares one box, so nothing below it moves */
+.persona-panel{align-items:center}
+.case-stage{display:grid;grid-template-rows:minmax(0,1fr);min-width:0}
+.case-stage>.case-media{grid-area:1/1;display:grid!important;grid-template-rows:minmax(0,1fr) auto;visibility:visible;margin:0;animation:none!important;min-height:0}
+.case-stage>.case-media[hidden]{visibility:hidden;pointer-events:none}
+.case-media>picture,.case-media>.still{min-height:0;display:grid;place-items:center;overflow:hidden;background:var(--surface2);padding:clamp(8px,1.6vw,16px)}
+.case-media>picture img,.case-media>.still{width:100%;height:100%;object-fit:contain;border-radius:10px}
+.case-media>picture img{border:1px solid var(--border);box-shadow:0 8px 22px rgba(20,18,34,.12)}
+.case-media>.how,.case-media>.codepair,.case-media>.ba{min-height:0;overflow:auto}
+.case-media>figcaption{grid-row:2}
+@media(min-width:1021px){.case-stage{aspect-ratio:1500/1060}}
+@media(max-width:1020px){.case-stage{min-height:420px;order:-1}.persona-panel{align-items:start}}
+/* compact explanatory cards (replace the empty "recording coming soon" stages; no pretend UI) */
+.how{display:grid;align-content:center;justify-items:start;gap:10px;padding:clamp(20px,3.4vw,40px);background:linear-gradient(135deg,var(--surface2),var(--surface))}
+.how-hero{position:absolute;inset:0;border-radius:12px;height:100%}
+.how-keys{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;color:var(--text2);font-size:14px}
+.how-keys kbd{font-size:1.05rem;padding:.3em .6em}
+.how-or{color:var(--text3);font-size:13px}
+.how h4{margin:4px 0 0;font-size:clamp(1.4rem,2.4vw,2rem);letter-spacing:-.025em;line-height:1.1}
+.how-out{margin:0;max-width:44ch;color:var(--text2);font-size:1rem;line-height:1.5}
+.how-ex{margin-top:6px;width:100%;max-width:46ch;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.how-ex .cp-l{margin:0 0 6px}
+.how-quote{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:.98rem;color:var(--text);line-height:1.4}
+.how-toast{padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700}
+.how-sw{width:22px;height:22px;border-radius:6px;background:#4b4bcb;border:1px solid var(--border-strong)}
+/* Before/After: the real Smart Paste menu plus the exact text result */
+.ba{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:0;background:var(--surface2)}
+.ba .still{width:100%;height:100%;min-height:0;object-fit:cover;object-position:78% 45%;border-bottom:1px solid var(--border)}
+.ba-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;padding:12px}
+.ba-card{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.ba-card p{margin:0;font-size:.92rem;line-height:1.4;color:var(--text)}
+.ba-after{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.ba-arrow{align-self:center;color:var(--text3);font-size:20px}
+@media(max-width:760px){.ba-row{grid-template-columns:1fr}.ba-arrow{transform:rotate(90deg);justify-self:center}.ba .still{height:auto;aspect-ratio:960/392}}
+/* Free vs Pro: full-width, larger, higher-contrast lists */
+.plan-grid{max-width:none}
+.plan ul{font-size:1rem;gap:9px;color:var(--text)}
+.plan li{line-height:1.45}
+.plan h3{font-size:1.2rem}
+/* left selectors vs right stage: stay vertically centred, same breathing room */
+.case-list{align-self:center}
+/* subtle Save & find crossfade (no travelling motion) */
+.stage-deck .sub{transition:opacity .35s ease,visibility 0s .35s}
+.stage-deck .sub.is-active{transition-delay:0s}
+@media(prefers-reduced-motion:reduce){.stage-deck .sub{transition:none}}
+.how-line{margin:0;font-size:.98rem;line-height:1.5;color:var(--text)}

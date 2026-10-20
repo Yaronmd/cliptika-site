@@ -68,12 +68,12 @@
     const video = story.querySelector('[data-hero-video]');
     const captions = [
       'Smart Paste — copy, press ⌥V, choose an action, and it pastes straight in.',
-      'Capture — press ⌥⇧S, drag over an area, and it is on your clipboard. Demo recording coming soon.',
+      'Capture — press ⌥⇧S, drag over an area, and it is on your clipboard, ready to paste.',
       'Pins — keep what you reuse one click away.',
       'Collections — group related clips, in the order you choose.',
       'Search — find anything you copied, in seconds.'
     ];
-    const MS = [0, 3600, 3000, 3000, 3000];            // beat 0 is the video (ends with the video); beats 2-4 are the three Save & find views
+    const MS = [0, 3600, 6500, 6500, 6500];            // beat 0 is the video (ends with the video); beats 2-4 are the three Save & find views (6.5 s each: time to read a real screenshot)
     const VIDEO_FALLBACK_MS = 9000, VIDEO_TAIL_MS = 900;
     const sceneOf = (b) => (b >= 2 ? 2 : b);
     const sceneTotal = (sc) => (sc === 2 ? MS[2] + MS[3] + MS[4] : MS[sc]);
@@ -110,7 +110,8 @@
       schedule(MS[b]);
     }
     function next() {
-      if (beat >= 4) { finished = true; clear(); setBar(2, 1, 0); return; }  // one pass, then rest
+      if (takenOver) return;                                                // a person is in control: an old timer must never move the stage
+      if (beat >= 4) { finished = true; clear(); setBar(2, 1, 0); ui(); return; }  // one pass, then rest
       playBeat(beat + 1);
     }
     video?.addEventListener('ended', () => { if (beat === 0 && !takenOver && started && !userPaused) { clear(); setBar(0, 1, 0); timer = setTimeout(next, VIDEO_TAIL_MS); } });
@@ -128,18 +129,29 @@
       let more = 0; for (let k = beat + 1; k <= 4 && sceneOf(k) === sc; k++) more += MS[k];
       setTimeout(() => setBar(sc, 1, left + more), 40); schedule(left);
     }
-    function start() { if (started || calm()) return; started = true; if (video) { video.preload = 'auto'; video.load(); } playBeat(0); }
+    function start() { if (started || takenOver || calm()) return; started = true; if (video) { video.preload = 'auto'; video.load(); } playBeat(0); }
     function takeOver(b) {                                                  // a person chose something: stop auto-advance for good
-      takenOver = true; finished = false; clear(); resetBars();
+      takenOver = true; finished = false; clear(); resetBars(); ui();
       show(b);                                                              // show() rewinds the video when leaving story 1
       if (sceneOf(b) === 0 && video) { resetPlayer(video); if (!calm()) startPlayback(video, { restart: true }); }
     }
-    interactionHooks.push((v) => { if (v === video) { takenOver = true; clear(); resetBars(); } });   // touching the video hands control to the person: no surprise scene change
+    interactionHooks.push((v) => { if (v === video) { takenOver = true; clear(); resetBars(); ui(); } });   // touching the video hands control to the person: no surprise scene change
     steps.forEach((s, i) => s.addEventListener('click', () => takeOver(i === 2 ? 2 : i)));
     subBtns.forEach((b, i) => b.addEventListener('click', () => takeOver(2 + i)));
+    // ONE control for the sequence. It is "Pause" while auto-advancing, and becomes "Resume autoplay" once a person has chosen a story/view
+    // (explicit selection stops auto-advance until they press it) or "Replay the sequence" after the single pass has finished.
+    function ui() {
+      if (!pauseBtn) return;
+      const on = userPaused || takenOver || finished;
+      const label = takenOver ? 'Resume autoplay' : finished ? 'Replay the sequence' : userPaused ? 'Resume the sequence' : 'Pause the sequence';
+      pauseBtn.setAttribute('aria-pressed', String(on)); pauseBtn.setAttribute('aria-label', label); pauseBtn.title = label;
+    }
     pauseBtn?.addEventListener('click', () => {
-      userPaused = !userPaused; pauseBtn.setAttribute('aria-pressed', String(userPaused));
-      pauseBtn.setAttribute('aria-label', userPaused ? 'Resume the sequence' : 'Pause the sequence');
+      if (takenOver || finished) {                                          // intentional resume: continue from where the person left the stage
+        takenOver = false; userPaused = false; const again = finished; finished = false; ui();
+        playBeat(again ? 0 : beat); return;
+      }
+      userPaused = !userPaused; ui();
       userPaused ? pauseNow() : resumeNow();
     });
     let ioFired = false;
@@ -149,7 +161,7 @@
     setTimeout(() => { if (ioFired) return; const r = stageEl.getBoundingClientRect(); inView = r.top < innerHeight * 0.7 && r.bottom > innerHeight * 0.3; if (inView) start(); }, 1200);
     document.addEventListener('visibilitychange', () => document.hidden ? pauseNow() : resumeNow());
     reduceMotion.addEventListener('change', () => { if (calm()) { pauseNow(); clear(); resetBars(); if (video) resetPlayer(video); } });
-    show(0);
+    show(0); ui();
     if (calm()) pauseBtn.hidden = true;                                     // nothing auto-plays, so nothing to pause
   }
 
