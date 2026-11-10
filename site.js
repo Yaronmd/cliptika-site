@@ -1,4 +1,4 @@
-/* Cliptika site: compact section menu for phones (rev. 9). Closes on selection, Escape or a tap outside. */
+/* Cliptika site: compact section menu for phones. Closes on selection, Escape or a tap outside. */
 (() => {
   const btn = document.querySelector('[data-menu]'), nav = btn && document.getElementById(btn.getAttribute('aria-controls'));
   if (!btn || !nav) return;

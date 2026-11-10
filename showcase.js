@@ -1,8 +1,7 @@
 /* Cliptika site: product showcase (Menu Bar hero storyboard, Capture Stack, Smart Paste and Lens simulations).
    Every example is a deterministic synthetic fixture. Nothing here reads or writes the visitor's clipboard, calls a server or uses AI.
-   The two panels reproduce Cliptika 0.6.0 (14) @ 03fc4ec: ActionLensView / LensView / CliptikaHUDHeader / KeyHintFooter /
-   CliptikaSelectionStyle / CliptikaProLockBadge (layout, type, selection, preview rules) and ActionLensResolver /
-   SmartPasteHierarchy / SmartPasteSequenceGroup / LensActionResolver (rows, order, short labels). See docs/SHOWCASE_SOURCE_AUDIT.md. */
+   The two panels follow Cliptika 0.6.0: layout, type, selection and preview rules, and the rows, order and short labels
+   each example offers. */
 (() => {
   'use strict';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,7 +18,7 @@
     new IntersectionObserver((es) => es.forEach((e) => cb(e.isIntersecting)), { threshold }).observe(el);
   };
 
-  /* ---------- the Cliptika mark (HaloMarkGeometry: ring r .40 / 318° +288°, echo r .255 / 150° +150°, core r .085) ---------- */
+  /* ---------- the Cliptika mark (ring r .40 / 318° +288°, echo r .255 / 150° +150°, core r .085) ---------- */
   const MARK = '<svg class="mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path class="mk-ring" d="M79.73 23.24A40 40 0 1 1 33.73 13.46"/><path class="mk-echo" d="M27.92 62.75A25.5 25.5 0 0 1 62.75 27.92"/><circle class="mk-core" cx="50" cy="50" r="8.5"/></svg>';
 
   /* ---------- SF Symbol stand-ins, drawn to the same 16 pt grid (names = the symbolName the app uses) ---------- */
@@ -85,7 +84,7 @@
   const sym = (n, cls = 'sym') => `<svg class="${cls}" viewBox="0 0 16 16" aria-hidden="true" focusable="false">${SYM[n] || ''}</svg>`;
   const LOCK = `<span class="pro-lock">${sym('lock.fill', 'lk')}Pro</span>`;
 
-  /* ---------- deterministic transforms, same semantics as HaloTextCaseConverter / HaloTextTransforms / HaloLineTools ---------- */
+  /* ---------- deterministic transforms, same semantics as the app's case, text and line tools ---------- */
   const words = (s) => s.replace(/([\p{Ll}\p{N}])(\p{Lu})/gu, '$1 $2').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
   const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
   const T = {
@@ -96,7 +95,7 @@
     snake: (s) => words(s).map((w) => w.toLowerCase()).join('_'),
     kebab: (s) => words(s).map((w) => w.toLowerCase()).join('-'),
     dedupe: (s) => { const seen = new Set(); return s.split('\n').filter((l) => !seen.has(l) && seen.add(l)).join('\n'); },
-    sort: (s) => s.split('\n').sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).join('\n')   // HaloLineTools.sortLines: code-point order, case-sensitive
+    sort: (s) => s.split('\n').sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).join('\n')   // Sort Lines: code-point order, case-sensitive
   };
   // US/ABC <-> Apple Hebrew key map (the layout pair 0.6.0 validates)
   const EN = "qwertyuiopasdfghjkl;zxcvbnm,./'", HE = "/'קראטוןםפשדגכעיחלךףזסבהנמצתץ.,";
@@ -116,14 +115,14 @@
   });
   const fixLayout = (input, dir, suggested) => ({
     t: 'Fix Keyboard Layout', s: 'keyboard', suggested,
-    // one "To <layout>" row per enabled target layout (HaloLayoutVariantSelection.forwardRowLabel); preview subtitle = directionSubtitle
+    // one "To <layout>" row per enabled target layout; the preview subtitle names the direction
     sub: [dir === 'he' ? { t: 'To Hebrew', s: 'keyboard', out: toHe(input), fix: 'English → Hebrew', n: 'Hebrew' }
       : dir === 'ru' ? { t: 'To Russian', s: 'keyboard', out: toRu(input), fix: 'English → Russian', n: 'Russian' }
       : { t: 'To English', s: 'keyboard', out: toEn(input), fix: 'Hebrew → English', n: 'English' }]
   });
   const translate = (lang, out) => ({ t: `Translate to ${lang}`, s: 'character.bubble', pro: true, tr: out, n: lang });
 
-  /* ---------- Smart Paste examples (order and grouping follow ActionLensResolver → SmartPasteHierarchy → SmartPasteOverflowLayout) ---------- */
+  /* ---------- Smart Paste examples (order and grouping follow the app) ---------- */
   /* Each example tells one story: what was copied (input, tag) → the menu path the app offers (rows, script) → the pasted result.
      script ops: key = ⌥V opens the panel · sel n = move to row n · exec = open a family / run the action · wait = translation finishes.
      Row fields used by the storyboard (website presentation only): n = short result note, marks = strike the removed parts of the source. */
@@ -134,9 +133,9 @@
   const json = '{"name":"Cliptika","version":"0.6.0","pro":true,"tags":["clipboard","mac"],"id":42}';
   const jsonPretty = '{\n  "id" : 42,\n  "name" : "Cliptika",\n  "pro" : true,\n  "tags" : [\n    "clipboard",\n    "mac"\n  ],\n  "version" : "0.6.0"\n}';
   const jsonMin = '{"id":42,"name":"Cliptika","pro":true,"tags":["clipboard","mac"],"version":"0.6.0"}';
-  // Clean URL (HaloSmartLinks): drops utm_* and known click IDs, keeps functional parameters such as q
+  // Clean URL: drops utm_* and known click IDs, keeps functional parameters such as q
   const urlBase = 'https://shop.example.com/search?q=mac%20mini', urlTrack = '&utm_source=mail&utm_campaign=fall', url = urlBase + urlTrack;
-  // HaloLineTools.removeDuplicateLines: exact lines, first occurrence kept, order preserved
+  // Dedupe Lines: exact lines, first occurrence kept, order preserved
   const lines = '  Ship release notes\nUpdate screenshots\nArchive old builds\nUpdate screenshots\nReview pricing copy\nArchive old builds';
   const lineMarks = lines.split('\n').map((l, i, all) => (all.indexOf(l) < i ? `<del>${esc(l)}</del>` : esc(l))).join('\n');
   const trimLines = (s) => s.split('\n').map((l) => l.trim()).join('\n');
@@ -206,7 +205,7 @@
         start: 1, script: [['key'], ['exec']] }] }
   ];
 
-  /* ---------- Lens examples (LensActionResolver / LensQuickInsert) ---------- */
+  /* ---------- Lens examples ---------- */
   const qiRoot = (dt, rc, dev) => [{ t: 'Date & Time', s: 'calendar', sub: dt || [] }, { t: 'Recent Clipboard', s: 'doc.on.clipboard', sub: rc || [] }, { t: 'Developer', s: 'hammer', pro: true, sub: dev || [] }];
   const DT = [{ t: 'Insert Date', s: 'calendar', out: 'Nov 9, 2026' }, { t: 'Insert Time', s: 'clock', out: '9:41 AM' },
     { t: 'Insert Date & Time', s: 'calendar.badge.clock', out: 'Nov 9, 2026 at 9:41 AM' }, { t: 'ISO Timestamp', s: 'number', out: '2026-11-09T07:41:00Z' }];
@@ -339,7 +338,7 @@
     }
     function row(r, i, label) {
       const on = i === sel;
-      if (r.key) {   // Recent Images row (SequenceRowView)
+      if (r.key) {   // Recent Images row
         return `<button type="button" class="row seq${on ? ' is-sel' : ''}" data-i="${i}" aria-current="${on}"><span class="lk-key">${r.key}</span>${sym(r.s)}<span class="rt">${esc(r.t)}</span>${r.detail ? `<span class="rd">${esc(r.detail)}</span>` : ''}</button>`;
       }
       return `<button type="button" class="row${on ? ' is-sel' : ''}${r.pro ? ' is-locked' : ''}" data-i="${i}" aria-current="${on}"${r.sub ? ' aria-haspopup="menu"' : ''}>
@@ -671,7 +670,7 @@
     selectTab(0);
     settle();
 
-    /* deterministic test hook (tests/demo-states.html): runs one example's script synchronously and records every state */
+    /* deterministic test hook for automated checks: runs one example's script synchronously and records every state */
     const snap = (label) => {
       const ins = $('[data-ins]', body), toast = $('[data-toast-t]', body), hud = $('[data-hud]', body), r = open ? cur() : null;
       let result = toast && toast.textContent ? toast.textContent : ins ? ins.textContent : '';
@@ -692,10 +691,10 @@
     });
   }
 
-  /* ---------- hero: the real menu bar window (HaloMenuView), with sample data ---------- */
+  /* ---------- hero: the menu bar window, with sample data ---------- */
   function hero() {
     const root = $('[data-hero]'); if (!root) return;
-    if (/[?&]menubarIcon=color\b/.test(location.search)) { const ic = $('.hm-icon', root); if (ic) ic.classList.add('is-color'); }   // owner reference only, not the shipping look
+    if (/[?&]menubarIcon=color\b/.test(location.search)) { const ic = $('.hm-icon', root); if (ic) ic.classList.add('is-color'); }   // optional preview, not the shipping look
     const vp = $('[data-hm-viewport]', root), cv = $('[data-hm-canvas]', root), cap = $('[data-hm-caption]', root), cursor = $('[data-hm-cursor]', root);
     $$('[data-sym]', root).forEach((el) => { el.outerHTML = sym(el.dataset.sym, `sym ${el.className}`.trim()); });
     const QA = [['viewfinder', 'Screenshot'], ['doc.badge.plus', 'New File'], ['doc.on.clipboard', 'Full Path'], ['terminal', 'Terminal']];
@@ -705,7 +704,7 @@
       ['Design tokens', 3, 'orange', 'paintpalette', [['#1F6FEB', 'text'], ['Spacing: 4 · 8 · 12 · 16 · 24', 'text'], ['font-family: "SF Pro Text"', 'text']]]];
     const PINS = [['Support Email Template', 'text'], ['Brand Colors', 'text'], ['Standup Agenda', 'text']];
     const RECENT = [['git status --short', 'text'], ['https://ci.example.com/run/4821', 'link'], ['Image · 1440×900', 'image'], ['…/Reports/Q4-report.pdf', 'file'], ['Kickoff: Tuesday 10:00 · Room 4', 'text']];
-    const TYPE = { text: 'doc.plaintext', link: 'link', file: 'doc', image: 'photo' };   // ClipboardContentType.symbolName
+    const TYPE = { text: 'doc.plaintext', link: 'link', file: 'doc', image: 'photo' };   // symbol per content type
     const item = (t, k, i) => `<button type="button" class="mrow" data-copy="${i}">${sym(TYPE[k] || 'doc.plaintext', 'mt')}<span class="mtx">${esc(t)}</span><span class="ok">${sym('checkmark.circle.fill', 'okg')}</span></button>`;
     $('[data-cols]', root).innerHTML = COLS.map(([n, c, col, icon], i) => `<button type="button" class="mrow col" data-col="${i}"><span class="fold c-${col}">${sym(icon, 'mt')}</span><span class="mtx">${esc(n)}</span><em>${c}</em></button>`).join('');
     $('[data-pins]', root).innerHTML = PINS.map(([t, k], i) => item(t, k, `p${i}`)).join('');
@@ -751,7 +750,7 @@
     }, 0.4);
   }
 
-  /* ---------- Capture Stack review window (CaptureStackPanelView) ---------- */
+  /* ---------- Capture Stack review window ---------- */
   function captureStack() {
     const root = $('[data-cs]'); if (!root) return;
     $$('[data-sym]', root).forEach((el) => { el.outerHTML = sym(el.dataset.sym, `sym ${el.className}`.trim()); });
@@ -759,8 +758,8 @@
     const SHOTS = [[1, '9:41:08 AM'], [2, '9:41:31 AM'], [3, '9:42:02 AM']];
     const rowHTML = ([n, time], i, selected) => `<div class="csr${selected ? ' is-sel' : ''}"><span class="csr-n">${i + 1}</span><span class="csr-t">${shot(n)}</span><span class="csr-m"><b>${time}</b><small>1440 × 900</small></span>${sym('minus.circle', 'csr-x')}</div>`;
     const combined = () => `<span class="out-imgs is-combined">${[1, 3, 2].map(shot).join('')}</span>`;
-    // CaptureStackPanelView @ 03fc4ec: "Copy Combined Image" (↩) puts the image on the clipboard and reports
-    // "Combined image copied · Ready to paste with ⌘V" (CaptureStackPresentation). Nothing is pasted by the window itself.
+    // "Copy Combined Image" (↩) puts the image on the clipboard and reports
+    // "Combined image copied · Ready to paste with ⌘V". Nothing is pasted by the window itself.
     const STEPS = [
       { rows: [0], label: 'Clipboard', out: () => shot(1), say: 'Take a screenshot as usual. On its own, it is simply on your clipboard, ready to paste.' },
       { rows: [0, 1, 2], label: 'Clipboard', out: () => shot(3), say: 'Keep capturing. Each screenshot joins the Stack in order, and the originals stay in Clipboard History.' },
@@ -851,9 +850,9 @@
     reserveSay(); let rs = null; window.addEventListener('resize', () => { clearTimeout(rs); rs = setTimeout(reserveSay, 150); });
   }
 
-  /* the hero and Capture Stack stay interactive demos by owner decision: no static-capture swap */
+  /* the hero and Capture Stack are interactive demos */
   $$('[data-mark]').forEach((el) => { el.innerHTML = MARK; });
   hero();
   captureStack();
-  window.__cliptikaDemos = $$('[data-demo]').map((el) => Demo(el, el.dataset.demo === 'lens' ? LENS : SP, el.dataset.demo));   // read by tests/demo-states.html
+  window.__cliptikaDemos = $$('[data-demo]').map((el) => Demo(el, el.dataset.demo === 'lens' ? LENS : SP, el.dataset.demo));   // read by automated checks
 })();

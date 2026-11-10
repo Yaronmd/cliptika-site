@@ -1,4 +1,4 @@
-# Publishes only the public website to GitHub Pages (docs/, tests/, tools/ and *.md stay out).
+# Publishes only the public website files to GitHub Pages (README.md and .github/ stay out).
 # Inactive until the repository's Pages source is set to "GitHub Actions" and this file is on main.
 name: Deploy website to GitHub Pages
 on:

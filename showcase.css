@@ -1,5 +1,5 @@
-/* Cliptika site — 0.6.0 product showcase layer on top of the approved style.css.
-   Product windows are RECONSTRUCTED from the 0.6.0 (14) SwiftUI source @ 03fc4ec (see docs/SHOWCASE_SOURCE_AUDIT.md);
+/* Cliptika site — 0.6.0 product showcase layer on top of style.css.
+   Product windows are interactive demos drawn to match the Cliptika 0.6.0 interface;
    every animated box has a fixed footprint; all motion is off under prefers-reduced-motion. */
 .hero-layout{align-items:center}
 .jump-steps .story-step{text-decoration:none;color:inherit}
@@ -9,7 +9,7 @@
 .section-head.center{text-align:center;margin-inline:auto}
 .pro{white-space:nowrap}
 
-/* ===== hero: the menu bar window (HaloMenuView, 320 pt) on a desktop ===== */
+/* ===== hero: the menu bar window (320 pt) on a desktop ===== */
 :root{--win-bg:#ececec;--win-row:rgba(0,0,0,.06)}
 @media(prefers-color-scheme:dark){:root{--win-bg:#2b2b2e;--win-row:rgba(255,255,255,.07)}}
 .hero-mb{min-width:0}
@@ -120,19 +120,19 @@
 .dscene .vkeys{z-index:3}
 .hud-note{position:absolute;left:0;bottom:0;margin:0;max-width:60%;color:var(--text2);font-size:12.5px;opacity:0;transition:opacity .3s}.hud-note.flash{opacity:1}
 
-/* ===== the panel: ActionLensView / LensView (padding 14, spacing 10, radius 16, regularMaterial, primary .08 border) ===== */
+/* ===== the panel: Smart Paste / Lens (padding 14, spacing 10, radius 16, regular material, primary .08 border) ===== */
 .hud{position:absolute;z-index:2;left:46%;top:84px;width:300px;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--m-mat);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);border:1px solid rgba(0,0,0,.08);box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 12px 36px rgba(0,0,0,.2);color:var(--m-1);font:13px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;text-align:left;opacity:0;visibility:hidden;transform:scale(.98);transition:opacity .15s ease,transform .15s ease,visibility 0s .15s;outline:none}
 @media(prefers-color-scheme:dark){.hud{border-color:rgba(255,255,255,.08);box-shadow:0 0 0 .5px rgba(0,0,0,.6),0 14px 40px rgba(0,0,0,.5)}}
 .hud.is-open{opacity:1;visibility:visible;transform:none;transition-delay:0s}
 .hud-lens{width:320px;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98)}.hud-lens.is-open{transform:translate(-50%,-50%)}
 :where(.hud) button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:left}
 .hud hr{margin:0;border:0;border-top:1px solid var(--m-sep)}
-/* CliptikaHUDHeader */
+/* panel header */
 .hud-h{color:var(--m-2)}.hud-h1{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}.hud-h1 .mark{width:14px;height:14px}
 .crumb{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;white-space:nowrap}.cv{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .hud-h2{margin-top:2px;font-size:10.5px;color:var(--m-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lens-crumb{display:inline-flex!important;align-items:center;gap:4px;font-size:11px!important;font-weight:500;color:var(--m-2)!important;align-self:flex-start}
-/* rows: ActionLensRowView (spacing 8, 13 medium, 8×6 padding, 1 pt apart) */
+/* rows (spacing 8, 13 medium, 8×6 padding, 1 pt apart) */
 .rows{display:flex;flex-direction:column;gap:1px}
 .row{position:relative;display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border-radius:8px;font-size:13px;font-weight:500;line-height:16px;color:var(--m-1)}
 .row .rn{width:14px;flex:none;text-align:right;font:500 11px/1 ui-rounded,-apple-system,system-ui,sans-serif;color:var(--m-2);font-variant-numeric:tabular-nums}
@@ -142,11 +142,11 @@
 .row.is-locked{opacity:.65}
 .sug{flex:none;padding:1px 6px;border-radius:4px;background:var(--m-sel);color:var(--m-accent);font-size:10px;font-weight:600}
 .pro-lock{flex:none;display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:999px;background:rgba(128,128,128,.14);color:var(--m-2);font-size:10px;font-weight:600;line-height:12px}.pro-lock .lk{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:1.8}.pro-lock .lk .gf{fill:currentColor}
-/* CliptikaSelectionStyle: accent at 12 % + a 3 pt accent bar */
+/* selection: accent at 12 % + a 3 pt accent bar */
 .row.is-sel{background:var(--m-sel);color:var(--m-1)}
 .row.is-sel::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:1.5px;background:var(--m-accent)}
 .row:focus-visible{outline:2px solid var(--m-accent);outline-offset:-2px}
-/* Recent Images group (SequenceRowView) */
+/* Recent Images group */
 .seq-group{display:flex;flex-direction:column;gap:1px}
 .seq-h{display:flex;align-items:baseline;gap:6px;padding:0 8px 2px;color:var(--m-2)}.seq-h span{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}.seq-h em{font-style:normal;font-size:10.5px}
 .lk-key{width:14px;height:14px;flex:none;display:grid;place-items:center;border:.5px solid rgba(128,128,128,.55);border-radius:3px;font:600 10px/1 ui-rounded,-apple-system,system-ui,sans-serif;color:var(--m-2)}
@@ -166,7 +166,7 @@
 .cmp p{margin:0;font:12px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word}
 .busy{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:500;color:var(--m-2)}.busy i{width:11px;height:11px;border-radius:50%;border:1.6px solid var(--m-3);border-top-color:var(--m-2);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* KeyHintFooter: 10.5 medium secondary, keys 10 semibold rounded */
+/* key hint footer: 10.5 medium secondary, keys 10 semibold rounded */
 .hints{display:flex;align-items:center;gap:12px;font-size:10.5px;font-weight:500;color:var(--m-2)}
 .hints b{margin-right:4px;font:600 10px ui-rounded,-apple-system,system-ui,sans-serif}
 .hints .esc{margin-left:auto}.hints button:hover{color:var(--m-1)}
@@ -273,14 +273,14 @@
 .gf{fill:currentColor}.gt{fill:currentColor;stroke:none}
 .hm-viewport>img.authentic,.csw>img.authentic{display:block;width:100%;height:auto}.hm-viewport:has(>img.authentic){height:auto!important}
 
-/* ===== rev. 4 refinements ===== */
-/* HaloMark .glass (HaloMarkPalette): light = ring deep with highlight shading, echo base 78 %; dark = ring base, echo light 72 % */
+/* ===== refinements ===== */
+/* the Cliptika mark: light = ring deep with highlight shading, echo base 78 %; dark = ring base, echo light 72 % */
 .mk-s1{stop-color:#8d8af2}.mk-s2{stop-color:#4e2994}
 .mark .mk-ring{stroke:url(#mk-ring-grad)}.mark .mk-echo{stroke:#5856d6;stroke-opacity:.78}.mark .mk-core{fill:#5856d6}
 @media(prefers-color-scheme:dark){.mk-s1{stop-color:#b7b6ff}.mk-s2{stop-color:#5e5ce6}.mark .mk-echo{stroke:#c2e4ff;stroke-opacity:.72}.mark .mk-core{fill:#5e5ce6}}
-/* menu bar: HaloMenuBarIcon is the flat mark rendered as a template image, so macOS draws it in the menu bar's own monochrome */
+/* menu bar: the flat mark as a template image, so macOS draws it in the menu bar's own monochrome */
 .hm-icon .mark .mk-ring,.hm-icon .mark .mk-echo{stroke:currentColor}.hm-icon .mark .mk-echo{stroke-opacity:.78}.hm-icon .mark .mk-core{fill:currentColor}
-/* owner reference only (?menubarIcon=color): the coloured mark as a possible future menu bar option, not the shipping look */
+/* optional preview (?menubarIcon=color): the coloured mark, not the shipping look */
 .hm-icon.is-color .mark .mk-ring{stroke:url(#mk-ring-grad)}.hm-icon.is-color .mark .mk-echo{stroke:#5856d6}.hm-icon.is-color .mark .mk-core{fill:#5856d6}
 
 /* two cards, one in motion: more air, clearer edges, a quiet accent on the active one (no dimming of the other) */
@@ -312,14 +312,14 @@
 .sc-grid{align-items:stretch}
 @media(prefers-color-scheme:dark){.btn-end{color:#ff8a80}}
 
-/* ===== rev. 5: final fidelity & balance ===== */
-/* SwiftUI system colours for Collection identities (CollectionAppearance.color) */
+/* ===== fidelity & balance ===== */
+/* system colours for Collection identities */
 :root{--sys-indigo:#5856d6;--sys-green:#28cd41;--sys-orange:#ff9500}
 @media(prefers-color-scheme:dark){:root{--sys-indigo:#5e5ce6;--sys-green:#32d74b;--sys-orange:#ff9f0a}}
 .fold.c-indigo{color:var(--sys-indigo)}.fold.c-green{color:var(--sys-green)}.fold.c-orange{color:var(--sys-orange)}
-.mrow.col .mt{width:13px;height:13px;stroke-width:1.35}           /* CollectionIdentityIcon: 13 pt medium, in a 16 pt frame */
+.mrow.col .mt{width:13px;height:13px;stroke-width:1.35}           /* Collection icon: 13 pt medium, in a 16 pt frame */
 .mrow .mt{stroke-width:1.25}
-/* HaloSearchField (menu size): 8 pt radius, primary 4.5 % fill, primary 8 % hairline, 6 × 9 padding, 12 pt glyph */
+/* search field (menu size): 8 pt radius, primary 4.5 % fill, primary 8 % hairline, 6 × 9 padding, 12 pt glyph */
 .search{height:auto;padding:6px 9px;border-radius:8px;background:rgba(0,0,0,.045);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);gap:7px;font-size:13px}
 @media(prefers-color-scheme:dark){.search{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}}
 
@@ -376,14 +376,14 @@
 @media(max-width:760px){.sc-stage .hud:not(.is-open){display:flex;visibility:hidden}.sc-stage .reopen{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);align-self:auto}}
 @media(max-width:760px){.sc-stage .appwin,.sc-stage .dscene-lens .appwin{height:236px;min-height:0;overflow:hidden}.sc-stage .chat{height:auto}}
 
-/* ===== rev. 6: Free / Pro copy ===== */
+/* ===== Free / Pro ===== */
 .plan-sub{margin:-2px 0 12px;color:var(--text2);font-size:.95rem}
 .plans .section-intro{max-width:56ch}
 /* the "Suggested" label fits the 16 pt row line, so a suggested row is not taller than its neighbours */
 .sug{line-height:14px}
 .plans .section-head{max-width:none}.plans .section-head h2{text-wrap:balance}
 
-/* ===== rev. 7: storyboard clarity (Copied → Action → Result) and pacing ===== */
+/* ===== storyboard (Copied → Action → Result) and pacing ===== */
 /* the stage is a column: source strip, the app window (fills what is left), the story bar; panels float as before */
 .sc-stage .dscene{display:flex;flex-direction:column}
 .sc-stage .dscene>.clipstrip{flex:none;margin:0 0 10px}
@@ -474,12 +474,12 @@
   .sc-stage .dscene.has-switch>.sample-switch button{border-radius:10px;white-space:normal;line-height:1.25;padding:5px 6px;font-size:11px}
 }
 
-/* ===== rev. 8: Pro card benefits (bold outcome, plain detail) ===== */
+/* ===== Pro card benefits (bold outcome, plain detail) ===== */
 .plan-plus{margin:-4px 0 10px;color:var(--text);font-size:.92rem;font-weight:650}
 .plan-benefits strong{color:var(--text);font-weight:680}
 .plan-benefits li{color:var(--text2)}
 
-/* ===== rev. 9: phones are composed, not shrunk ===== */
+/* ===== phones are composed, not shrunk ===== */
 @media(max-width:760px){
   /* the panel floats over the lower part of the window, as on a Mac; it closes after the paste so the result stays in view */
   .sc-stage .dscene{position:relative}
@@ -539,7 +539,7 @@
 .demo-steps li:nth-child(3).is-on{flex:0 0 auto;max-width:none}   /* the result never gives way; a finished action does */
 .cs-fine .sc-tag{margin-right:6px;vertical-align:1px}
 
-/* ===== rev. 10: final polish ===== */
+/* ===== polish ===== */
 /* hero jump cards: one row, one height; number and label share a top line */
 .jump-steps li{display:flex}
 .jump-steps .story-step{flex:1;min-height:100%}

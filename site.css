@@ -1,4 +1,4 @@
-/* Cliptika site: shared additions for every page (rev. 9). style.css stays the approved base. */
+/* Cliptika site: shared additions for every page, on top of style.css. */
 .menu-btn{display:none}
 .mnav[hidden]{display:none}
 @media(max-width:760px){
