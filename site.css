@@ -1,0 +1,23 @@
+/* Cliptika site: shared additions for every page, on top of style.css. */
+.menu-btn{display:none}
+.mnav[hidden]{display:none}
+@media(max-width:760px){
+  .site-header .download{margin-left:auto}
+  .menu-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;height:40px;margin-right:0;padding:0 8px;border:0;border-radius:10px;background:transparent;color:var(--text);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+  .menu-btn:hover,.menu-btn[aria-expanded=true]{background:var(--accent-soft)}
+  .menu-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+  .menu-btn[aria-expanded=true] .mb-open,.menu-btn[aria-expanded=false] .mb-close{display:none}
+  .mnav{position:absolute;left:0;right:0;top:100%;display:grid;padding:6px 16px 12px;background:var(--bg);border-bottom:1px solid var(--border);box-shadow:0 18px 30px rgba(0,0,0,.12)}
+  .mnav a{display:flex;align-items:center;min-height:46px;padding:0 4px;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;text-decoration:none}
+  .mnav a:last-child{border-bottom:0}
+  .mnav a[aria-current=page]{color:var(--accent)}
+}
+@media(max-width:360px){.menu-btn .mb-word{display:none}.site-header .download{padding:7px 10px;font-size:12px}}
+/* legal and support pages */
+.legal .meta-note{padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text2);font-size:.92rem}
+.legal h3{margin:22px 0 6px;font-size:1rem}
+/* comfortable targets for the brand and footer links (WCAG 2.2 target size) */
+.site-header .brand,.site-footer .brand,.footer-brand{min-height:44px;display:inline-flex;align-items:center}
+.footer-links a{display:inline-flex;align-items:center;min-height:32px}
+.text-link{display:inline-flex;align-items:center;min-height:32px}
+.nav-links a{display:inline-flex;align-items:center;min-height:32px}
