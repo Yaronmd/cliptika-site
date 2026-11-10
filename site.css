@@ -21,3 +21,17 @@
 .footer-links a{display:inline-flex;align-items:center;min-height:32px}
 .text-link{display:inline-flex;align-items:center;min-height:32px}
 .nav-links a{display:inline-flex;align-items:center;min-height:32px}
+/* header: the brand sits on a deliberate gutter instead of the window edge, with a larger mark */
+.site-header .nav-shell{padding-inline:clamp(16px,2.4vw,32px)}
+.site-header .brand{gap:10px;font-size:16px;letter-spacing:0}
+.site-header .brand img{width:30px;height:30px;border-radius:7px}
+@media(min-width:761px) and (max-width:900px){.nav-links{gap:18px}}
+@media(max-width:760px){
+  .site-header .nav-shell{gap:10px}
+  .site-header .brand img{width:28px;height:28px;border-radius:6.5px}
+  .menu-btn{margin-left:-8px}
+  /* the header menu already links every section, so the three hero cards are not repeated on phones */
+  .hero .jump-steps{display:none}
+}
+/* section links land with the heading clear of the sticky header */
+#capture-stack,#free-pro{scroll-margin-top:64px}
