@@ -429,6 +429,7 @@
     function panelTop() {
       const win = $('.appwin', body), at = $('[data-ins]', body) || $('.f.is-sel', body), sc = scene();
       if (!win) return 0;
+      if (!lens && phone()) { const bar = $('.appwin-bar', win); return win.offsetTop + (bar ? bar.offsetHeight : 28) + 6; }   // phones: just under the title bar
       const y = at ? at.getBoundingClientRect().top - sc.getBoundingClientRect().top + 30 : win.offsetTop + 64;
       return Math.round(Math.max(win.offsetTop + 52, Math.min(y, win.offsetTop + (lens ? 76 : 118))));
     }
@@ -726,12 +727,15 @@
     $('[data-pop]', root).addEventListener('keydown', (e) => { if (e.key === 'Escape' && !browser.hidden) { e.preventDefault(); closeCol(); } });
     // scale the 660 × 700 scene to its column; phones frame the window itself
     const fit = () => {
-      const w = vp.clientWidth, narrow = w < 540, sw = narrow ? 352 : 660, s = Math.min(1, w / sw);
+      const w = vp.clientWidth, ph = phone(), narrow = ph || w < 540, sw = narrow ? 352 : 660, s = ph ? w / sw : Math.min(1, w / sw);
       cv.style.setProperty('--s', s); cv.style.setProperty('--ox', narrow ? '-296px' : '0px');
-      vp.style.height = `${(narrow ? 448 : 700) * s}px`;   // phones: the top of the menu (search, Quick Actions, Collections, Pinned) and a soft crop
+      vp.style.height = `${(ph ? MINI_H : narrow ? 448 : 700) * s}px`;   // phones: a still crop of the menu bar and the top of the window; narrow columns: down to Pinned
       vp.classList.toggle('is-cropped', narrow);
+      vp.inert = ph; vp.classList.toggle('is-mini', ph);
     };
+    const MINI_H = 236;
     new ResizeObserver(fit).observe(vp); fit();
+    phoneQ.addEventListener('change', fit);
     // one quiet pass: open a Collection, copy a saved command, go back
     let auto = [];
     const stopAuto = () => { auto.forEach(clearTimeout); auto = []; cursor.classList.remove('is-on'); };
@@ -739,7 +743,7 @@
     const point = (el) => { const r = el.getBoundingClientRect(), c = cv.getBoundingClientRect(), s = parseFloat(cv.style.getPropertyValue('--s')) || 1; cursor.style.transform = `translate(${(r.left - c.left) / s + r.width / s * 0.55}px,${(r.top - c.top) / s + r.height / s * 0.55}px)`; };
     let ran = false;
     onVisible(root, (v) => {
-      if (!v || ran || calm()) return; ran = true;
+      if (!v || ran || calm() || phone()) return; ran = true;   // phones show the still crop only
       cursor.classList.add('is-on');
       const col = $('[data-col="0"]', root);
       at(900, () => point(col));
@@ -866,6 +870,12 @@
     const links = SP.find((c) => c.id === 'links');
     window.__cliptikaMobileDemo = Demo(mCard, [Object.assign({}, links, { id: 'links-m', tab: 'Clean URL',
       cap: 'Clean URL removes the tracking and pastes only the link. Free, along with the other Smart Paste actions for text, lines and links.' })], 'smartpaste-m');
+  }
+  // Smart Paste page: a few real examples, Clean URL first
+  const xCard = $('[data-demo-explore]');
+  if (xCard) {
+    const pick = ['links', 'lines', 'case', 'layout', 'json'];
+    window.__cliptikaExploreDemo = Demo(xCard, pick.map((id) => SP.find((c) => c.id === id)), 'smartpaste-x');
   }
   // the hero names itself by the heading that is on screen
   const heroSec = $('[data-label-m]');
