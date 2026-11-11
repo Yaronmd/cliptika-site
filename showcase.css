@@ -762,6 +762,10 @@
 }
 @media(max-width:360px){.mf-row{gap:10px;padding-inline:12px}.mf-t small{font-size:.82rem}}
 
-/* desktop headline breaks after each sentence; tablet widths keep one flowing line */
-@media(max-width:1020px){#hero-title br{display:none}}
-@media(max-width:760px){.hero h1.m-only{align-self:stretch}}   /* the short sentence lines keep the headline on the left edge */
+/* Homepage headline: it wraps only between its three sentences. Sizes are measured so no sentence is wider than its
+   column: desktop caps at 73.6px (from 80px) where the widest sentence, "Paste it right.", would pass the column;
+   phones fit "Copy once. Find it again." on one line, so the headline stays at two lines from 320px up. */
+.hero h1 .hl-s{white-space:nowrap;color:inherit}   /* only "Paste it right." takes the accent colour */
+@media(min-width:1021px){.hero h1.d-only{font-size:clamp(2.35rem,5.4vw,4.6rem)}}
+@media(max-width:760px){.hero h1.m-only{align-self:stretch;font-size:clamp(1.5rem,calc(8.6vw - 3px),2.9rem)}}
+#fp-heading .nw{white-space:nowrap}   /* the Free / Pro heading breaks between phrases, never inside one */

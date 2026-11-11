@@ -139,8 +139,8 @@
   const lines = '  Ship release notes\nUpdate screenshots\nArchive old builds\nUpdate screenshots\nReview pricing copy\nArchive old builds';
   const lineMarks = lines.split('\n').map((l, i, all) => (all.indexOf(l) < i ? `<del>${esc(l)}</del>` : esc(l))).join('\n');
   const trimLines = (s) => s.split('\n').map((l) => l.trim()).join('\n');
-  const textRows = (input, dir, suggested, lang, tr) => [caseGroup(input), fixLayout(input, dir, suggested), translate(lang, tr)];
-  const caseRows = textRows(caseIn, 'he', false, 'Spanish', 'fecha de vencimiento de la factura');
+  const textRows = (input, lang, tr) => [caseGroup(input), translate(lang, tr)];   // Fix Keyboard Layout is not shown until it ships
+  const caseRows = textRows(caseIn, 'Spanish', 'fecha de vencimiento de la factura');
 
   const SP = [
     { id: 'json', tab: 'JSON & Developer', pro: true, cap: 'Compact JSON becomes readable, key-sorted JSON. JSON actions are Pro.',
@@ -153,23 +153,16 @@
     { id: 'translate', tab: 'Translate', pro: true, cap: 'Translates into the language set in Settings and previews it first. macOS 15 or later; Pro.',
       samples: [
         { label: 'English → Spanish', tag: 'English', input: trIn, doc: { app: 'Re: Draft — Mail', before: 'Hola Lucía,\n\n', after: '\n\nSaludos,\nDana' },
-          rows: textRows(trIn, 'he', false, 'Spanish', 'Gracias por la actualización. Revisaré el borrador esta noche y enviaré comentarios mañana.'),
-          script: [['key'], ['sel', 2], ['exec'], ['wait'], ['exec']] },
+          rows: textRows(trIn, 'Spanish', 'Gracias por la actualización. Revisaré el borrador esta noche y enviaré comentarios mañana.'),
+          script: [['key'], ['sel', 1], ['exec'], ['wait'], ['exec']] },
         { label: 'Hebrew → English', tag: 'Hebrew', input: trInHe, rtlIn: true, doc: { app: 'Team — Messages', chat: 'Any news on the review?', before: '', after: '' },
-          rows: textRows(trInHe, 'en', false, 'English', 'The meeting moved to Thursday at 10:00.'),
-          script: [['key'], ['sel', 2], ['exec'], ['wait'], ['exec']] }] },
-    { id: 'layout', tab: 'Fix Keyboard Layout', cap: 'Same keys, right letters. Works with compatible keyboard layouts added to your Mac, including Hebrew, Russian, French, German, and more.',
-      samples: [
-        { label: 'English keys → Hebrew', tag: 'English keys', input: fixIn1, doc: { app: 'Noa — Messages', chat: 'מה קורה? 🙂', before: '', after: '' },
-          rows: textRows(fixIn1, 'he', true, 'Spanish'), start: 1, script: [['key'], ['exec'], ['exec']] },
-        // U.S. + Russian enabled: "To Russian", no "Suggested" (the detector is calibrated for English ↔ Hebrew only)
-        { label: 'English keys → Russian', tag: 'English keys', input: fixIn2, doc: { app: 'Alexei — Messages', chat: 'Ты на связи? 🙂', before: '', after: '' },
-          rows: textRows(fixIn2, 'ru', false, 'Spanish'), script: [['key'], ['sel', 1], ['exec'], ['exec']] }] },
+          rows: textRows(trInHe, 'English', 'The meeting moved to Thursday at 10:00.'),
+          script: [['key'], ['sel', 1], ['exec'], ['wait'], ['exec']] }] },
     { id: 'lines', tab: 'Lines & Cleanup', cap: 'Formatted lines from a web page: trim, sort, dedupe or paste plain. When more than seven actions fit, the rest wait under More Actions.',
       samples: [{ input: lines, tag: '6 lines', mark: lineMarks, doc: { app: 'Release — Notes', before: 'Release tasks\n\n', after: '' },
         rows: [{ t: 'Trim', s: 'text.alignleft', out: lines.trim() }, { t: 'Trim Lines', s: 'scissors', out: trimLines(lines) },
           { t: 'Sort Lines', s: 'arrow.up.arrow.down', out: T.sort(lines) }, { t: 'Dedupe Lines', s: 'line.3.horizontal.decrease', out: T.dedupe(lines), n: 'Cleaned list', marks: true },
-          { t: 'Paste Plain', s: 'doc.plaintext', out: lines }, fixLayout(lines, 'he', false),
+          { t: 'Paste Plain', s: 'doc.plaintext', out: lines },
           { t: 'More Actions', s: 'ellipsis.circle', more: true, sub: [caseGroup(lines), translate('Spanish')] }],
         script: [['key'], ['sel', 3], ['exec']] }] },
     { id: 'links', tab: 'Links & URLs', cap: 'Remove tracking, make a Markdown link, or generate a GET request in five formats.',
@@ -880,7 +873,7 @@
   // Smart Paste page: a few real examples, Clean URL first
   const xCard = $('[data-demo-explore]');
   if (xCard) {
-    const pick = ['links', 'lines', 'case', 'layout', 'json'];
+    const pick = ['links', 'lines', 'case', 'json'];
     window.__cliptikaExploreDemo = Demo(xCard, pick.map((id) => SP.find((c) => c.id === id)), 'smartpaste-x');
   }
   // the hero names itself by the heading that is on screen
