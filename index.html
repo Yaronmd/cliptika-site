@@ -11,7 +11,7 @@
   <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="assets/icons/cliptika-app-icon-180.png">
   <link rel="stylesheet" href="style.css?v=preview-19"><link rel="stylesheet" href="site.css?v=s12">
-  <link rel="stylesheet" href="showcase.css?v=sc-70-m2">
+  <link rel="stylesheet" href="showcase.css?v=sc-71-m3">
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -22,7 +22,7 @@
 <linearGradient id="mk-ring-grad" x1="0" y1="0" x2="1" y2="1"><stop class="mk-s1" offset="0"/><stop class="mk-s2" offset="1"/></linearGradient></defs></svg>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
-    <div class="container nav-shell"><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-controls="mnav" aria-label="Open menu"><svg class="mb-open" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 5.5h12M3 9h12M3 12.5h12"/></svg><svg class="mb-close" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9"/></svg><span class="mb-word">Menu</span></button><nav class="mnav" id="mnav" aria-label="Site sections" hidden><a href="#m-benefits">What it does</a><a href="#m-smart-paste">Smart Paste</a><a href="#m-more">Lens &amp; Capture Stack</a><a href="#free-pro">Free &amp; Pro</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></nav>
+    <div class="container nav-shell"><button class="menu-btn" type="button" data-menu aria-expanded="false" aria-controls="mnav" aria-label="Open menu"><svg class="mb-open" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 5.5h12M3 9h12M3 12.5h12"/></svg><svg class="mb-close" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9"/></svg><span class="mb-word">Menu</span></button><nav class="mnav" id="mnav" aria-label="Site sections" hidden><a href="#m-benefits">What it does</a><a href="#m-smart-paste">Smart Paste</a><a href="#free-pro">Free &amp; Pro</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></nav>
       <a class="brand" href="index.html"><img src="assets/icons/cliptika-app-icon-64.png" alt="" width="30" height="30">Cliptika</a>
       <nav class="nav-links" aria-label="Main navigation"><a href="#smart-paste">Smart Paste</a><a href="#lens">Lens</a><a href="#capture-stack">Capture Stack</a><a href="#free-pro">Free &amp; Pro</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></nav>
       <span class="download is-soon" aria-label="Coming soon to the Mac App Store">Coming soon</span>
@@ -84,7 +84,7 @@
             </div>
           </div>
           <p class="hm-cap d-only"><span class="hm-tag">Interactive Demo</span> <span data-hm-caption aria-live="polite">Everything you copy and save, one click away in the menu bar.</span></p>
-          <p class="hm-mini-cap m-only">Cliptika in the Mac menu bar, shown with sample content.</p>
+          <p class="hm-mini-cap m-only">Your recent copies, one click away in the Mac menu bar. Shown with sample content.</p>
         </div>
       </div>
     </section>
@@ -103,29 +103,14 @@
 
     <section class="m-only m-sec m-demo" id="m-smart-paste" aria-labelledby="msp-heading">
       <div class="container">
-        <div class="section-head"><p class="eyebrow">See it in action</p><h2 id="msp-heading">One shortcut. The right paste.</h2></div>
-        <article class="sc-card" aria-labelledby="msp-title" data-demo-m="smartpaste">
-          <header class="sc-h">
-            <div class="sc-id"><svg class="sc-ic" aria-hidden="true"><use href="#icon-smartpaste"/></svg><h3 id="msp-title">Smart Paste</h3><kbd>⌥V</kbd></div>
-            <p>Copied a link full of tracking? Press ⌥V on your Mac and choose Clean URL. Only the link you meant gets pasted.</p>
-          </header>
-          <div class="sc-tabs" role="tablist" aria-label="Smart Paste example" data-demo-tabs></div>
-          <div class="sc-stage" data-demo-body></div>
-          <div class="sc-foot"><p class="sc-cap" data-demo-cap aria-live="polite"></p><div class="sc-extra" data-demo-extra></div></div>
-        </article>
-        <p class="m-note"><span class="sc-tag">Interactive Demo</span> Sample content only. It never reads or changes your clipboard. Tap Replay, or tap an action to try it.</p>
+        <div class="section-head"><p class="eyebrow">Smart Paste · <kbd>⌥V</kbd></p><h2 id="msp-heading">One shortcut. The right paste.</h2></div>
+        <figure class="m-ba" data-ba>
+          <div class="ba-box"><p class="ba-l">You copied</p><p class="ba-url">https://shop.example.com/<wbr>search?<wbr>q=mac%20mini<del><wbr>&amp;utm_source=email<wbr>&amp;utm_campaign=fall</del><span class="sr-only"> (tracking part removed by Smart Paste)</span></p></div>
+          <p class="ba-mid" aria-hidden="true"><kbd>⌥V</kbd><span>Clean URL</span></p>
+          <div class="ba-box ba-after"><p class="ba-l">Smart Paste pasted</p><p class="ba-url">https://shop.example.com/<wbr>search?<wbr>q=mac%20mini</p></div>
+          <figcaption>Press <kbd>⌥V</kbd> on your Mac and Smart Paste offers only the actions that fit. Clean URL strips the tracking and pastes just the link. Free.</figcaption>
+        </figure>
         <p class="m-explore-row m-only"><a class="m-explore" href="smart-paste.html">Explore Smart Paste <span aria-hidden="true">→</span></a></p>
-      </div>
-    </section>
-
-    <section class="m-only m-sec m-more" id="m-more" aria-labelledby="mm-heading">
-      <div class="container">
-        <div class="section-head"><p class="eyebrow">There’s more</p><h2 id="mm-heading">More than Smart Paste.</h2></div>
-        <ul class="mm-list">
-          <li><span class="mb-ic"><svg class="ic" aria-hidden="true"><use href="#icon-lens"/></svg></span><div><h3>Cliptika Lens <kbd>⌥A</kbd></h3><p>Actions right where you are: insert the date or a recent clip, or act on a file you just copied.</p></div></li>
-          <li><span class="mb-ic" data-sym="square.stack.3d.up"></span><div><h3>Capture Stack</h3><p>Collect screenshots as you go, put them in order, then copy one combined image.</p></div></li>
-          <li><span class="mb-ic" data-sym="doc.on.clipboard"></span><div><h3>History, Pins &amp; Collections</h3><p>Everything you copy is kept. Pin what you reuse and group it into Collections in your menu bar.</p></div></li>
-        </ul>
       </div>
     </section>
 
@@ -213,21 +198,21 @@
         </div>
 
         <div class="m-only m-plans">
-          <div class="mp-card"><h3>Free forever</h3><p>History, search, pins and Collections, Smart Paste for text, lines and links, and Capture Stacks of up to 3 screenshots.</p></div>
-          <div class="mp-card mp-pro"><h3>Cliptika Pro <span class="mp-tag">Lifetime</span></h3><p>One purchase, no subscription. Adds Extract Text, JSON and image actions, Translate on macOS 15 or later, unlimited pins and Capture Stacks of up to 10.</p></div>
+          <div class="mp-card"><h3>Free forever</h3><ul><li>Clipboard history and search</li><li>Pins and Collections, within Free limits</li><li>Smart Paste for text, lines and links</li><li>Capture Stacks of up to 3 screenshots</li></ul></div>
+          <div class="mp-card mp-pro"><h3>Cliptika Pro <span class="mp-tag">Lifetime</span></h3><p class="mp-sub">One purchase, no subscription.</p><ul><li>Extract Text, plus JSON and image actions</li><li>Translate on macOS 15 or later</li><li>Unlimited Pins and Collections</li><li>Capture Stacks of up to 10 screenshots</li></ul></div>
         </div>
         <p class="pro-note d-only"><span class="pro">Pro</span> marks actions that are part of Cliptika Pro.</p>
       </div>
     </section>
 
-    <section class="cta" id="download" aria-labelledby="cta-heading">
+    <section class="cta d-only" id="download" aria-labelledby="cta-heading">
       <div class="container cta-inner"><div><h2 id="cta-heading">Coming soon to the Mac App Store.</h2><p>For macOS 14.6 or later · Keyboard-first · Local-first · No account, no analytics. <a class="text-link" href="privacy.html">Privacy Policy →</a></p></div></div>
     </section>
   </main>
 
   <footer class="site-footer"><div class="container footer-inner"><a class="footer-brand" href="index.html">Cliptika</a><nav class="footer-links" aria-label="Footer navigation"><a href="privacy.html">Privacy</a><a href="support.html">Support</a></nav><small class="copyright">© 2026 Yaron Mordechai / YBMG Studio</small></div></footer>
   <script src="script.js?v=preview-hero-19"></script>
-  <script src="showcase.js?v=sc-70-m2"></script>
+  <script src="showcase.js?v=sc-71-m3"></script>
   <script src="site.js?v=s12"></script>
 </body>
 </html>

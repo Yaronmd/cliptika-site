@@ -727,13 +727,15 @@
     $('[data-pop]', root).addEventListener('keydown', (e) => { if (e.key === 'Escape' && !browser.hidden) { e.preventDefault(); closeCol(); } });
     // scale the 660 × 700 scene to its column; phones frame the window itself
     const fit = () => {
-      const w = vp.clientWidth, ph = phone(), narrow = ph || w < 540, sw = narrow ? 352 : 660, s = ph ? w / sw : Math.min(1, w / sw);
-      cv.style.setProperty('--s', s); cv.style.setProperty('--ox', narrow ? '-296px' : '0px');
+      const w = vp.clientWidth, ph = phone(), narrow = ph || w < 540, sw = ph ? Math.max(352, Math.min(MINI_W, w / 0.92)) : narrow ? 352 : 660, s = ph ? w / sw : Math.min(1, w / sw);
+      cv.style.setProperty('--s', s); cv.style.setProperty('--ox', ph ? `${-(648 - sw)}px` : narrow ? '-296px' : '0px');
       vp.style.height = `${(ph ? MINI_H : narrow ? 448 : 700) * s}px`;   // phones: a still crop of the menu bar and the top of the window; narrow columns: down to Pinned
       vp.classList.toggle('is-cropped', narrow);
       vp.inert = ph; vp.classList.toggle('is-mini', ph);
+      if (ph !== miniFolded) { miniFolded = ph; $('[data-col-toggle]', root).setAttribute('aria-expanded', String(!ph)); $('[data-cols]', root).hidden = ph; }
     };
-    const MINI_H = 236;
+    let miniFolded = false;
+    const MINI_H = 458, MINI_W = 392;   // phones: down to the third Recent item (text, link, image), Collections folded
     new ResizeObserver(fit).observe(vp); fit();
     phoneQ.addEventListener('change', fit);
     // one quiet pass: open a Collection, copy a saved command, go back
@@ -865,11 +867,12 @@
      The desktop showcase, the menu bar hero and Capture Stack are display:none on phones, so their viewport-triggered
      playback never starts there. This card is display:none above 760px for the same reason. */
   $$('.m-sec [data-sym]').forEach((el) => { el.innerHTML = sym(el.dataset.sym, 'sym'); el.removeAttribute('data-sym'); });
-  const mCard = $('[data-demo-m]');
-  if (mCard) {
-    const links = SP.find((c) => c.id === 'links');
-    window.__cliptikaMobileDemo = Demo(mCard, [Object.assign({}, links, { id: 'links-m', tab: 'Clean URL',
-      cap: 'Clean URL removes the tracking and pastes only the link. Free, along with the other Smart Paste actions for text, lines and links.' })], 'smartpaste-m');
+  // phones: the Clean URL before → after plays its one transition when it scrolls into view (or rests finished)
+  const ba = $('[data-ba]');
+  if (ba && !calm() && 'IntersectionObserver' in window) {
+    ba.classList.add('is-ready');
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { ba.classList.add('is-on'); io.disconnect(); } }, { threshold: 0.6 });
+    io.observe(ba);
   }
   // Smart Paste page: a few real examples, Clean URL first
   const xCard = $('[data-demo-explore]');
@@ -881,7 +884,7 @@
   const heroSec = $('[data-label-m]');
   const heroLabel = () => { if (heroSec) heroSec.setAttribute('aria-labelledby', phone() ? heroSec.dataset.labelM : 'hero-title'); };
   // links from Privacy, Support or older shares (index.html#lens …) land on the matching phone section, never on hidden content
-  const PHONE_TARGET = { 'smart-paste': 'm-smart-paste', showcase: 'm-smart-paste', lens: 'm-more', 'capture-stack': 'm-more', work: 'm-benefits' };
+  const PHONE_TARGET = { 'smart-paste': 'm-smart-paste', showcase: 'm-smart-paste', lens: 'm-benefits', 'capture-stack': 'm-benefits', download: 'free-pro', work: 'm-benefits' };
   const phoneHash = () => {
     const id = decodeURIComponent(location.hash.slice(1)), to = phone() && PHONE_TARGET[id] && document.getElementById(PHONE_TARGET[id]);
     if (to) requestAnimationFrame(() => to.scrollIntoView({ block: 'start', behavior: 'auto' }));
