@@ -889,7 +889,7 @@
   // Site links go straight to the feature pages. Only old shared links to homepage sections need a hand on phones,
   // where those sections are not shown: feature sections open their pages, the rest land on the matching phone section.
   const PHONE_PAGE = { 'smart-paste': 'smart-paste.html', lens: 'lens.html', 'capture-stack': 'capture-stack.html' };
-  const PHONE_TARGET = { showcase: 'm-smart-paste', download: 'free-pro', work: 'm-benefits' };
+  const PHONE_TARGET = { showcase: 'm-smart-paste', download: 'free-pro', work: 'm-features' };
   const phoneHash = () => {
     const id = decodeURIComponent(location.hash.slice(1));
     if (phone() && heroSec && PHONE_PAGE[id]) { location.replace(PHONE_PAGE[id]); return; }
