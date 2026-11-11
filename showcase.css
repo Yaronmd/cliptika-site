@@ -564,3 +564,200 @@
 @media(max-width:760px){.cs-steps{grid-auto-rows:1fr}}
 .hm-viewport:has(>img.authentic)::after{display:none}   /* an authentic capture is shown whole, without the phone fade */
 @media(min-width:761px){.sc-stage .hud-lens{top:calc(50% + 10px)}}   /* desktop: the Lens panel clears the line it just inserted into */
+
+/* ===== Phones (max-width 760px): a short product story =====
+   .m-only exists only for phones; .d-only marks the desktop showcase that phones do not render. Nothing in this block
+   applies above 760px except hiding the new phone-only elements, so the approved desktop and tablet layouts are untouched. */
+.m-only{display:none!important}
+@media(max-width:760px){
+  .d-only{display:none!important}
+  .m-only{display:revert!important}
+  .hero h1.m-only{display:block!important}
+  .m-sec,.m-plans{display:block!important}
+  .m-sec{padding:28px 0;border-top:1px solid var(--border);scroll-margin-top:58px}
+  #free-pro{scroll-margin-top:58px}
+
+  /* hero: words only, readable at a glance */
+  .hero{padding:26px 0 28px}
+  .hero h1.m-only{font-size:clamp(2.2rem,10.4vw,3.1rem);line-height:1.04;letter-spacing:-.035em}
+  .hero h1.m-only span{white-space:normal}
+  .hero .hero-copy.m-only{font-size:1.06rem;line-height:1.5;color:var(--text2);margin:10px 0 8px;max-width:34ch}
+  .hero .chip.m-only{display:inline-block!important}
+
+  /* three benefits: icon + two lines, no interaction */
+  .mb-list,.mm-list{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+  .mb-list li,.mm-list li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start}
+  .mb-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent)}
+  .mb-ic .sym,.mb-ic .ic{width:22px;height:22px}
+  .mb-ic .ic .ic-primary{fill:currentColor}.mb-ic .ic .ic-secondary{fill:currentColor;opacity:.55}
+  .mb-ic .sym{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+  .mb-list h3,.mm-list h3{margin:1px 0 3px;font-size:1.02rem;line-height:1.3;letter-spacing:-.01em}
+  .mb-list p,.mm-list p{margin:0;color:var(--text2);font-size:.94rem;line-height:1.48}
+  .mm-list h3 kbd{font-size:.72em;margin-left:4px;vertical-align:2px}
+  .m-benefits{border-top:0;padding-top:4px}
+
+  /* the one interactive example */
+  .m-sec .section-head{margin-bottom:16px}
+  .m-sec .section-head h2{font-size:clamp(1.65rem,7.4vw,2.1rem)}
+  .m-demo .sc-card{scroll-margin-top:70px}
+  .m-demo .sc-tabs{display:none}
+  .m-note{margin:12px 2px 0;color:var(--text2);font-size:12.5px;line-height:1.45}
+  .m-note .sc-tag{margin-right:6px;vertical-align:1px}
+
+  /* Free and Pro, in two short cards */
+  .plans .section-head{margin-bottom:14px}
+  .m-plans{display:grid!important;gap:10px}
+  .mp-card{padding:16px 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+  .mp-card h3{margin:0 0 4px;font-size:1.08rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .mp-card p{margin:0;color:var(--text2);font-size:.94rem;line-height:1.48}
+  .mp-pro{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+  .mp-tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;font-weight:760;letter-spacing:.04em;text-transform:uppercase}
+}
+
+/* ===== Phones, round 2: three-second hero, mini menu bar, a tighter Smart Paste window ===== */
+@media(max-width:760px){
+  .hero .m-eyebrow{display:block!important;order:1;margin:0}
+  .hero .m-eyebrow,.hero .compat{align-self:flex-start}
+  .hero .soon-badge{margin-bottom:0}
+  .hero .compat{margin-top:-4px}
+  .hero h1.m-only{font-size:clamp(2.05rem,9.4vw,2.9rem);line-height:1.05}
+  .hero h1.m-only span{white-space:nowrap}
+  .hero .hero-copy.m-only{margin:4px 0 6px;font-size:1.04rem}
+  /* the mini menu bar: a still, non-interactive crop of the approved menu bar window */
+  .hero .hero-mb{width:100%;max-width:400px;align-self:flex-start;margin:2px 0 0}
+  .hm-viewport.is-mini{border-radius:16px;box-shadow:0 12px 30px rgba(30,28,46,.12)}
+  .hm-viewport.is-mini::after{height:56px}
+  .hm-viewport.is-mini .hm-cursor{display:none}
+  .hm-mini-cap{display:block!important;margin:8px 2px 0;color:var(--text2);font-size:12.5px;line-height:1.4}
+  /* Smart Paste on phones: a tighter panel, so the window it opens over needs less height */
+  .sc-stage .hud:not(.hud-lens){padding-block:10px}
+  .sc-stage .hud:not(.hud-lens) .row{min-height:26px}
+  .m-explore-row{display:block!important;margin:14px 2px 0}
+  .m-explore{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--accent);font-weight:650;font-size:15px;text-decoration:none}
+  .m-explore:hover{text-decoration:underline}
+}
+@media(max-width:760px) and (prefers-color-scheme:dark){.hm-viewport.is-mini{box-shadow:0 12px 30px rgba(0,0,0,.4)}}
+
+/* ===== Smart Paste page (smart-paste.html only: every rule is scoped to .xp-page) ===== */
+.xp-page .xp-narrow{max-width:760px}
+.xp-page .xp-hero{padding:clamp(22px,4vw,48px) 0 clamp(26px,4vw,44px);background:radial-gradient(900px 420px at 82% -8%,var(--accent-soft),transparent 70%)}
+.xp-page .xp-back{margin:0 0 14px}
+.xp-page .xp-back a{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--accent);font-weight:650;font-size:15px;text-decoration:none}
+.xp-page .xp-back a:hover{text-decoration:underline}
+.xp-page .xp-hero .eyebrow kbd{font-size:.95em;text-transform:none;letter-spacing:0;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 35%,var(--border))}
+.xp-page .xp-hero h1{font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.05;letter-spacing:-.035em;margin:0;font-weight:760;text-wrap:balance}
+.xp-page .xp-lead{margin:14px 0 0;color:var(--text2);font-size:clamp(1.02rem,1.5vw,1.15rem);max-width:56ch}
+.xp-page .xp-lead kbd{font-size:.8em}
+.xp-page .xp-steps{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:10px}
+.xp-page .xp-steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start;color:var(--text2);line-height:1.45}
+.xp-page .xp-steps b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:13px}
+.xp-page .xp-steps strong{color:var(--text)}
+.xp-page .xp-demo .section-head{margin-bottom:16px}
+.xp-page .xp-note{margin:12px 2px 0;color:var(--text2);font-size:13px;line-height:1.45}
+.xp-page .xp-note .sc-tag{margin-right:6px;vertical-align:1px}
+.xp-page .xp-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.xp-page .xp-group{padding:18px 20px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.xp-page .xp-pro{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.xp-page .xp-group h3{margin:0 0 8px;font-size:1.1rem}
+.xp-page .xp-group ul{margin:0;padding-left:18px;display:grid;gap:8px;color:var(--text2);font-size:.95rem;line-height:1.48}
+.xp-page .xp-group strong{color:var(--text)}
+@media(max-width:760px){
+  .xp-page .xp-groups{grid-template-columns:1fr}
+  .xp-page .xp-hero{padding-top:12px}
+  .xp-page .xp-back{margin-bottom:6px}
+}
+
+/* ===== Phones, round 3: clipboard items in the hero crop, a compact Smart Paste before → after, short plan cards ===== */
+@media(max-width:760px){
+  .hm-viewport.is-mini::after{height:40px}
+  .hm-mini-cap{margin-top:8px}
+  .m-demo .section-head .eyebrow kbd{font-size:.95em;text-transform:none;letter-spacing:0;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 35%,var(--border))}
+  .m-ba{margin:0;display:grid;gap:8px}
+  .ba-box{padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+  .mba-after{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+  .ba-l{margin:0 0 4px;color:var(--text3);font-size:11px;font-weight:720;letter-spacing:.06em;text-transform:uppercase}
+  .mba-after .ba-l{color:var(--accent)}
+  .ba-url{margin:0;font:500 13.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text);overflow-wrap:break-word}
+  .ba-url del{color:var(--text3);text-decoration:line-through;text-decoration-color:#e5484d;text-decoration-thickness:1.5px}
+  .ba-mid{margin:0;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:13px;font-weight:650}
+  .ba-mid::before,.ba-mid::after{content:"";flex:1;height:1px;background:var(--border-strong)}
+  .ba-mid kbd{font-size:12px}
+  .ba-mid span{padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+  .m-ba figcaption{margin:6px 2px 0;color:var(--text2);font-size:.94rem;line-height:1.48}
+  .m-ba figcaption kbd{font-size:.8em}
+  /* one transition when it scrolls into view: the tracking is struck, then the clean link lands */
+  .m-ba.is-ready .ba-url del{text-decoration-color:transparent;color:var(--text);transition:color .5s ease .2s,text-decoration-color .5s ease .2s}
+  .m-ba.is-ready .ba-mid,.m-ba.is-ready .mba-after{opacity:0;transform:translateY(-6px);transition:opacity .45s ease,transform .45s ease}
+  .m-ba.is-ready .ba-mid{transition-delay:.7s}.m-ba.is-ready .mba-after{transition-delay:1s}
+  .m-ba.is-on .ba-url del{text-decoration-color:#e5484d;color:var(--text3)}
+  .m-ba.is-on .ba-mid,.m-ba.is-on .mba-after{opacity:1;transform:none}
+  .m-explore-row{margin-top:10px}
+  .mp-card ul{margin:2px 0 0;padding-left:18px;display:grid;gap:4px;color:var(--text2);font-size:.94rem;line-height:1.45}
+  .mp-sub{margin:0 0 6px!important;color:var(--text)!important;font-weight:600}
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){.m-ba *{transition:none!important}}
+
+/* ===== Phones, round 4: the Clean URL example as one compact card ===== */
+@media(max-width:760px){
+  .m-ba{gap:0}
+  .mba-card{border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:16px;background:var(--surface);overflow:hidden}
+  .mba-row{padding:10px 14px}
+  .mba-row+.mba-row{border-top:1px solid var(--border)}
+  .mba-after{background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+  .ba-l{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 2px;font-size:10.5px}
+  .ba-l kbd{font-size:11px;padding:.1em .4em;text-transform:none;letter-spacing:0}
+  .ba-act{padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;letter-spacing:.04em}
+  .ba-url{font-size:13px;line-height:1.45}
+  .m-ba figcaption{margin:8px 2px 0;font-size:.92rem}
+  .m-explore-row{margin-top:4px}
+  .m-demo .section-head{margin-bottom:12px}
+  /* the one transition: the tracking is struck, then the clean link lands */
+  .m-ba.is-ready .mba-after{transform:none}
+}
+@media(max-width:760px){
+  .m-ba figcaption{margin:6px 2px 0}
+  .m-explore-row{margin-top:0}
+}
+
+/* ===== Phones: the hero crop starts at the menu bar's status area (Finder's menus would be cut mid-word) ===== */
+@media(max-width:760px){.hm-viewport.is-mini .hm-bar>b,.hm-viewport.is-mini .hm-bar>span:not(.hm-right){visibility:hidden}}
+
+/* ===== Feature pages (.xp-page): shared pieces ===== */
+.xp-page .mp-tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;font-weight:760;letter-spacing:.04em;text-transform:uppercase;vertical-align:2px}
+.xp-page .xp-group kbd{font-size:.8em}
+.xp-page .xp-more{padding-block:clamp(26px,3.6vw,40px)}
+.xp-page .xp-more h2.eyebrow{font-size:12px;letter-spacing:.06em;margin:0 0 12px}
+.xp-page .xp-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.xp-page .xp-more-card{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;padding:16px 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .2s ease}
+.xp-page .xp-more-card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.xp-page .xp-more-card strong{display:block;font-size:1.02rem;margin:1px 0 3px}
+.xp-page .xp-more-card strong span{color:var(--accent)}
+.xp-page .xp-more-card small{display:block;color:var(--text2);font-size:.92rem;line-height:1.45}
+.xp-page .mb-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent)}
+.xp-page .mb-ic .ic,.xp-page .mb-ic .sym{width:22px;height:22px}
+.xp-page .mb-ic .ic .ic-primary{fill:currentColor}.xp-page .mb-ic .ic .ic-secondary{fill:currentColor;opacity:.55}
+.xp-page .mb-ic .sym{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.xp-page .xp-cs .cs-card{max-width:1080px;margin-inline:auto}
+@media(max-width:760px){.xp-page .xp-more-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.xp-page .xp-more-card{transition:none}}
+
+/* ===== Phones: "Explore features" rows between the Clean URL example and Free / Pro ===== */
+@media(max-width:760px){
+  .m-features{padding-block:22px 26px;scroll-margin-top:58px}
+  .m-features h2.eyebrow{margin:0 0 10px;font-size:12px}
+  .mf-list{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:16px;background:var(--surface);overflow:hidden}
+  .mf-list li+li{border-top:1px solid var(--border)}
+  .mf-row{display:grid;grid-template-columns:32px minmax(0,1fr) 16px;align-items:center;gap:12px;min-height:60px;padding:10px 14px;color:var(--text);text-decoration:none;-webkit-tap-highlight-color:transparent}
+  .mf-row:active{background:var(--accent-soft)}
+  .mf-row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:15px}
+  .mf-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent)}
+  .mf-ic .ic,.mf-ic .sym{width:18px;height:18px}
+  .mf-ic .ic .ic-primary{fill:currentColor}.mf-ic .ic .ic-secondary{fill:currentColor;opacity:.55}
+  .mf-ic .sym{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+  .mf-t{min-width:0}
+  .mf-t strong{display:block;font-size:.98rem;line-height:1.3;letter-spacing:-.01em}
+  .mf-t small{display:block;color:var(--text2);font-size:.88rem;line-height:1.35}
+  .mf-chev{width:16px;height:16px;fill:none;stroke:var(--text3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .m-demo{padding-bottom:22px}
+}
+@media(max-width:360px){.mf-row{gap:10px;padding-inline:12px}.mf-t small{font-size:.82rem}}

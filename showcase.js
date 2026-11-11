@@ -206,13 +206,13 @@
   ];
 
   /* ---------- Lens examples ---------- */
-  const qiRoot = (dt, rc, dev) => [{ t: 'Date & Time', s: 'calendar', sub: dt || [] }, { t: 'Recent Clipboard', s: 'doc.on.clipboard', sub: rc || [] }, { t: 'Developer', s: 'hammer', pro: true, sub: dev || [] }];
+  const qiRoot = (dt, rc, dev) => [{ t: 'Date & Time', s: 'calendar', sub: dt || [] }, { t: 'Recent Clipboard', s: 'doc.on.clipboard', sub: rc || [] }, { t: 'Developer', s: 'hammer', sub: dev || [] }];
   const DT = [{ t: 'Insert Date', s: 'calendar', out: 'Nov 9, 2026' }, { t: 'Insert Time', s: 'clock', out: '9:41 AM' },
     { t: 'Insert Date & Time', s: 'calendar.badge.clock', out: 'Nov 9, 2026 at 9:41 AM' }, { t: 'ISO Timestamp', s: 'number', out: '2026-11-09T07:41:00Z' }];
   const RC = [{ t: '#48213 shipped today — tracking 1Z 999 AA1…', s: 'doc.on.clipboard', out: '#48213 shipped today — tracking 1Z 999 AA1 01 2345 6784' },
     { t: 'https://ci.example.com/run/4821', s: 'doc.on.clipboard', out: 'https://ci.example.com/run/4821' },
     { t: 'Kickoff: Tuesday 10:00 · Room 4', s: 'doc.on.clipboard', out: 'Kickoff: Tuesday 10:00 · Room 4' }];
-  const DEV = [{ t: 'UUID', s: 'number', pro: true, out: '9F2C6B1E-4A7D-4E21-B8C3-5D0E7A1F3B92' }, { t: 'Unix Timestamp', s: 'clock.arrow.circlepath', pro: true, out: '1794217260' }];
+  const DEV = [{ t: 'UUID', s: 'number', out: '9F2C6B1E-4A7D-4E21-B8C3-5D0E7A1F3B92' }, { t: 'Unix Timestamp', s: 'clock.arrow.circlepath', pro: true, out: '1794217260' }];
   // Lens actions that do not type text report what they did (website presentation), never a fake paste
   const LENS = [
     { id: 'qi', tab: 'Quick Insert', cap: 'Cursor in any text field, ⌥A, Date & Time. Formats follow your Mac’s language and region.',
@@ -221,13 +221,13 @@
     { id: 'recent', tab: 'Recent Clipboard', cap: 'Your recent text clips, right at the cursor.',
       samples: [{ ctx: ['Context', 'Cursor in a support reply'], doc: { app: 'Order #48213 — Support', before: 'Thanks for your patience. Your order ', after: '' },
         rows: qiRoot(DT, RC, DEV), start: 1, script: [['key'], ['exec'], ['exec']] }] },
-    { id: 'files', tab: 'Files & Folders', cap: 'Copy a file in Finder (⌘C), then ⌥A within 15 seconds: its path, Reveal, or act on its folder.',
+    { id: 'files', tab: 'Files & Folders', cap: 'Copy a file in Finder (⌘C), then press ⌥A: its path, Reveal, or act on its folder.',
       samples: [{ ctx: ['Copied', 'Q4-report.pdf in Finder'], finder: true, label2: 'Copied File · Q4-report.pdf', groups: [['Copied File', 2], ['This Folder', 3]],
         rows: [{ t: 'Copy Path', s: 'doc.on.clipboard', toast: 'Clipboard now holds /Users/you/Documents/Reports/Q4-report.pdf', res: 'Copied · Path' }, { t: 'Reveal File', s: 'folder', toast: 'Finder reveals Q4-report.pdf', res: 'Shown in Finder' },
           { t: 'New File', s: 'doc.badge.plus', toast: 'A new file is created in Reports', res: 'File created' }, { t: 'Copy Folder Path', s: 'doc.on.clipboard', toast: 'Clipboard now holds /Users/you/Documents/Reports', res: 'Copied · Folder path' },
-          { t: 'Open Terminal Here', s: 'terminal', pro: true, toast: 'Terminal opens in ~/Documents/Reports', res: 'Terminal opened' }],
+          { t: 'Open Terminal Here', s: 'terminal', toast: 'Terminal opens in ~/Documents/Reports', res: 'Terminal opened' }],
         script: [['key'], ['exec']] }] },
-    { id: 'dev', tab: 'Developer', pro: true, cap: 'A fresh UUID or the current Unix timestamp at the cursor. Developer actions are Pro.',
+    { id: 'dev', tab: 'Developer', cap: 'A fresh UUID or the current Unix timestamp at the cursor. Unix Timestamp is Pro.',
       samples: [{ ctx: ['Context', 'Cursor in fixtures.ts'], doc: { app: 'fixtures.ts — Editor', mono: true, before: 'const order = {\n  id: "', after: '",\n  status: "open",\n};' },
         rows: qiRoot(DT, RC, DEV), start: 2, script: [['key'], ['exec'], ['exec']] }] }
   ];
@@ -254,8 +254,8 @@
     replay: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M2.6 2.2v2.9h2.9"/></svg>'
   };
 
-  function Demo(root, data, kind) {
-    const lens = kind === 'lens';
+  function Demo(root, data, kind, opts = {}) {
+    const lens = kind === 'lens' || kind === 'lens-x';
     const TITLE = lens ? 'Cliptika Lens' : 'Smart Paste', KEY = lens ? 'A' : 'V';
     const tabsEl = $('[data-demo-tabs]', root), body = $('[data-demo-body]', root), capEl = $('[data-demo-cap]', root), extra = $('[data-demo-extra]', root);
     let cat = 0, sample = 0, open = true, path = [], sel = 0, tr = {}, played = false;
@@ -266,6 +266,7 @@
     tabsEl.innerHTML = data.map((c, i) => `<button class="sc-tab" role="tab" type="button" id="${kind}-tab-${c.id}" aria-selected="${i === 0}" aria-controls="${kind}-panel" tabindex="${i ? -1 : 0}">${esc(c.tab)}${c.pro ? ' <span class="pro">Pro</span>' : ''}</button>`).join('');
     const tabs = $$('.sc-tab', tabsEl);
     body.id = `${kind}-panel`; body.setAttribute('role', 'tabpanel');
+    if (data.length === 1) { tabsEl.hidden = true; body.removeAttribute('role'); }   // a single example (phones): no tab list to choose from
 
     const S = () => data[cat].samples[sample];
     const node = () => path.reduce((rows, i) => rows[i].sub, S().rows);           // rows of the open level
@@ -428,6 +429,7 @@
     function panelTop() {
       const win = $('.appwin', body), at = $('[data-ins]', body) || $('.f.is-sel', body), sc = scene();
       if (!win) return 0;
+      if (!lens && phone()) { const bar = $('.appwin-bar', win); return win.offsetTop + (bar ? bar.offsetHeight : 28) + 6; }   // phones: just under the title bar
       const y = at ? at.getBoundingClientRect().top - sc.getBoundingClientRect().top + 30 : win.offsetTop + 64;
       return Math.round(Math.max(win.offsetTop + 52, Math.min(y, win.offsetTop + (lens ? 76 : 118))));
     }
@@ -660,7 +662,7 @@
       if (!v) { if (mode === 'playing') pause(); return; }
       if (!played) {
         played = true;
-        if (lens || calm() || (coordinator.active && coordinator.active !== self && coordinator.active.playing)) return;   // Lens rests until touched
+        if ((lens && !opts.autoplay) || calm() || (coordinator.active && coordinator.active !== self && coordinator.active.playing)) return;   // Lens rests until touched
         coordinator.activate(self); demoOnce();
       }
     }, 0.45);
@@ -725,12 +727,17 @@
     $('[data-pop]', root).addEventListener('keydown', (e) => { if (e.key === 'Escape' && !browser.hidden) { e.preventDefault(); closeCol(); } });
     // scale the 660 × 700 scene to its column; phones frame the window itself
     const fit = () => {
-      const w = vp.clientWidth, narrow = w < 540, sw = narrow ? 352 : 660, s = Math.min(1, w / sw);
-      cv.style.setProperty('--s', s); cv.style.setProperty('--ox', narrow ? '-296px' : '0px');
-      vp.style.height = `${(narrow ? 448 : 700) * s}px`;   // phones: the top of the menu (search, Quick Actions, Collections, Pinned) and a soft crop
+      const w = vp.clientWidth, ph = phone(), narrow = ph || w < 540, sw = ph ? Math.max(352, Math.min(MINI_W, w / 0.92)) : narrow ? 352 : 660, s = ph ? w / sw : Math.min(1, w / sw);
+      cv.style.setProperty('--s', s); cv.style.setProperty('--ox', ph ? `${-(648 - sw)}px` : narrow ? '-296px' : '0px');
+      vp.style.height = `${(ph ? MINI_H : narrow ? 448 : 700) * s}px`;   // phones: a still crop of the menu bar and the top of the window; narrow columns: down to Pinned
       vp.classList.toggle('is-cropped', narrow);
+      vp.inert = ph; vp.classList.toggle('is-mini', ph);
+      if (ph !== miniFolded) { miniFolded = ph; $('[data-col-toggle]', root).setAttribute('aria-expanded', String(!ph)); $('[data-cols]', root).hidden = ph; }
     };
+    let miniFolded = false;
+    const MINI_H = 458, MINI_W = 392;   // phones: down to the third Recent item (text, link, image), Collections folded
     new ResizeObserver(fit).observe(vp); fit();
+    phoneQ.addEventListener('change', fit);
     // one quiet pass: open a Collection, copy a saved command, go back
     let auto = [];
     const stopAuto = () => { auto.forEach(clearTimeout); auto = []; cursor.classList.remove('is-on'); };
@@ -738,7 +745,7 @@
     const point = (el) => { const r = el.getBoundingClientRect(), c = cv.getBoundingClientRect(), s = parseFloat(cv.style.getPropertyValue('--s')) || 1; cursor.style.transform = `translate(${(r.left - c.left) / s + r.width / s * 0.55}px,${(r.top - c.top) / s + r.height / s * 0.55}px)`; };
     let ran = false;
     onVisible(root, (v) => {
-      if (!v || ran || calm()) return; ran = true;
+      if (!v || ran || calm() || phone()) return; ran = true;   // phones show the still crop only
       cursor.classList.add('is-on');
       const col = $('[data-col="0"]', root);
       at(900, () => point(col));
@@ -777,7 +784,7 @@
       [2200, 3, { press: true, label: 'Clipboard', out: () => shot(3), done: false }],      // Combine   5.0 s: the press, then the result
       [1000, 3, {}]
     ];
-    const HOLD = 4000;
+    const HOLD = 4000, PACE_K = root.dataset.csPace === 'quick' ? 0.55 : 1;   // the Capture Stack page plays a quicker pass
     let step = 0, timer = null, mode = 'idle', frame = 0, offscreen = false;
     const rowsByKey = {};
     function renderRows(order, selected) {
@@ -822,7 +829,7 @@
       if (mode !== 'playing' || offscreen) return;
       if (frame >= FRAMES.length) { timer = setTimeout(() => { mode = 'idle'; bar(); }, HOLD); return; }
       const [wait, k, partial] = FRAMES[frame];
-      timer = setTimeout(() => { frame += 1; show(k, false, partial); tick(); }, wait);
+      timer = setTimeout(() => { frame += 1; show(k, false, partial); tick(); }, wait * PACE_K);
     }
     function start() { started = true; coordinator.activate(self); frame = 0; mode = 'playing'; bar(); tick(); }
     function stopAuto() { clearTimeout(timer); mode = 'idle'; bar(); }
@@ -855,4 +862,41 @@
   hero();
   captureStack();
   window.__cliptikaDemos = $$('[data-demo]').map((el) => Demo(el, el.dataset.demo === 'lens' ? LENS : SP, el.dataset.demo));   // read by automated checks
+
+  /* ---------- phones (max-width 760px): one Smart Paste example in a short product story ----------
+     The desktop showcase, the menu bar hero and Capture Stack are display:none on phones, so their viewport-triggered
+     playback never starts there. This card is display:none above 760px for the same reason. */
+  $$('.m-sec [data-sym], .xp-more [data-sym]').forEach((el) => { el.innerHTML = sym(el.dataset.sym, 'sym'); el.removeAttribute('data-sym'); });
+  // phones: the Clean URL before → after plays its one transition when it scrolls into view (or rests finished)
+  const ba = $('[data-ba]');
+  if (ba && !calm() && 'IntersectionObserver' in window) {
+    ba.classList.add('is-ready');
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { ba.classList.add('is-on'); io.disconnect(); } }, { threshold: 0.6 });
+    io.observe(ba);
+  }
+  // Lens page: the four examples, playing once on its own page
+  const lCard = $('[data-demo-lens-page]');
+  if (lCard) window.__cliptikaLensPage = Demo(lCard, LENS, 'lens-x', { autoplay: true });
+  // Smart Paste page: a few real examples, Clean URL first
+  const xCard = $('[data-demo-explore]');
+  if (xCard) {
+    const pick = ['links', 'lines', 'case', 'layout', 'json'];
+    window.__cliptikaExploreDemo = Demo(xCard, pick.map((id) => SP.find((c) => c.id === id)), 'smartpaste-x');
+  }
+  // the hero names itself by the heading that is on screen
+  const heroSec = $('[data-label-m]');
+  const heroLabel = () => { if (heroSec) heroSec.setAttribute('aria-labelledby', phone() ? heroSec.dataset.labelM : 'hero-title'); };
+  // Site links go straight to the feature pages. Only old shared links to homepage sections need a hand on phones,
+  // where those sections are not shown: feature sections open their pages, the rest land on the matching phone section.
+  const PHONE_PAGE = { 'smart-paste': 'smart-paste.html', lens: 'lens.html', 'capture-stack': 'capture-stack.html' };
+  const PHONE_TARGET = { showcase: 'm-smart-paste', download: 'free-pro', work: 'm-features' };
+  const phoneHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (phone() && heroSec && PHONE_PAGE[id]) { location.replace(PHONE_PAGE[id]); return; }
+    const to = phone() && PHONE_TARGET[id] && document.getElementById(PHONE_TARGET[id]);
+    if (to) requestAnimationFrame(() => to.scrollIntoView({ block: 'start', behavior: 'auto' }));
+  };
+  heroLabel(); phoneHash();
+  window.addEventListener('hashchange', phoneHash);
+  phoneQ.addEventListener('change', heroLabel);
 })();

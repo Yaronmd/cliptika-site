@@ -35,3 +35,11 @@
 }
 /* section links land with the heading clear of the sticky header */
 #capture-stack,#free-pro{scroll-margin-top:64px}
+/* phones: icon-only menu button (44 × 44, icon on the page gutter) and a panel that opens from the left under it */
+@media(max-width:760px){
+  .menu-btn{width:44px;min-width:44px;height:44px;padding:0;margin-left:-13px;gap:0}
+  .menu-btn .mb-word{display:none}
+  .site-header .nav-shell{gap:6px}
+  .mnav{left:8px;right:auto;top:calc(100% + 6px);width:min(300px,calc(100% - 16px));padding:6px 8px;border:1px solid var(--border);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.16)}
+  .mnav a{padding:0 8px}
+}
