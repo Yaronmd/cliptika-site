@@ -740,3 +740,24 @@
 .xp-page .xp-cs .cs-card{max-width:1080px;margin-inline:auto}
 @media(max-width:760px){.xp-page .xp-more-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.xp-page .xp-more-card{transition:none}}
+
+/* ===== Phones: "Explore features" rows between the Clean URL example and Free / Pro ===== */
+@media(max-width:760px){
+  .m-features{padding-block:22px 26px;scroll-margin-top:58px}
+  .m-features h2.eyebrow{margin:0 0 10px;font-size:12px}
+  .mf-list{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:16px;background:var(--surface);overflow:hidden}
+  .mf-list li+li{border-top:1px solid var(--border)}
+  .mf-row{display:grid;grid-template-columns:32px minmax(0,1fr) 16px;align-items:center;gap:12px;min-height:60px;padding:10px 14px;color:var(--text);text-decoration:none;-webkit-tap-highlight-color:transparent}
+  .mf-row:active{background:var(--accent-soft)}
+  .mf-row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:15px}
+  .mf-ic{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent)}
+  .mf-ic .ic,.mf-ic .sym{width:18px;height:18px}
+  .mf-ic .ic .ic-primary{fill:currentColor}.mf-ic .ic .ic-secondary{fill:currentColor;opacity:.55}
+  .mf-ic .sym{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+  .mf-t{min-width:0}
+  .mf-t strong{display:block;font-size:.98rem;line-height:1.3;letter-spacing:-.01em}
+  .mf-t small{display:block;color:var(--text2);font-size:.88rem;line-height:1.35}
+  .mf-chev{width:16px;height:16px;fill:none;stroke:var(--text3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .m-demo{padding-bottom:22px}
+}
+@media(max-width:360px){.mf-row{gap:10px;padding-inline:12px}.mf-t small{font-size:.82rem}}
