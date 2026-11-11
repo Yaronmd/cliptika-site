@@ -206,13 +206,13 @@
   ];
 
   /* ---------- Lens examples ---------- */
-  const qiRoot = (dt, rc, dev) => [{ t: 'Date & Time', s: 'calendar', sub: dt || [] }, { t: 'Recent Clipboard', s: 'doc.on.clipboard', sub: rc || [] }, { t: 'Developer', s: 'hammer', pro: true, sub: dev || [] }];
+  const qiRoot = (dt, rc, dev) => [{ t: 'Date & Time', s: 'calendar', sub: dt || [] }, { t: 'Recent Clipboard', s: 'doc.on.clipboard', sub: rc || [] }, { t: 'Developer', s: 'hammer', sub: dev || [] }];
   const DT = [{ t: 'Insert Date', s: 'calendar', out: 'Nov 9, 2026' }, { t: 'Insert Time', s: 'clock', out: '9:41 AM' },
     { t: 'Insert Date & Time', s: 'calendar.badge.clock', out: 'Nov 9, 2026 at 9:41 AM' }, { t: 'ISO Timestamp', s: 'number', out: '2026-11-09T07:41:00Z' }];
   const RC = [{ t: '#48213 shipped today — tracking 1Z 999 AA1…', s: 'doc.on.clipboard', out: '#48213 shipped today — tracking 1Z 999 AA1 01 2345 6784' },
     { t: 'https://ci.example.com/run/4821', s: 'doc.on.clipboard', out: 'https://ci.example.com/run/4821' },
     { t: 'Kickoff: Tuesday 10:00 · Room 4', s: 'doc.on.clipboard', out: 'Kickoff: Tuesday 10:00 · Room 4' }];
-  const DEV = [{ t: 'UUID', s: 'number', pro: true, out: '9F2C6B1E-4A7D-4E21-B8C3-5D0E7A1F3B92' }, { t: 'Unix Timestamp', s: 'clock.arrow.circlepath', pro: true, out: '1794217260' }];
+  const DEV = [{ t: 'UUID', s: 'number', out: '9F2C6B1E-4A7D-4E21-B8C3-5D0E7A1F3B92' }, { t: 'Unix Timestamp', s: 'clock.arrow.circlepath', pro: true, out: '1794217260' }];
   // Lens actions that do not type text report what they did (website presentation), never a fake paste
   const LENS = [
     { id: 'qi', tab: 'Quick Insert', cap: 'Cursor in any text field, ⌥A, Date & Time. Formats follow your Mac’s language and region.',
@@ -221,13 +221,13 @@
     { id: 'recent', tab: 'Recent Clipboard', cap: 'Your recent text clips, right at the cursor.',
       samples: [{ ctx: ['Context', 'Cursor in a support reply'], doc: { app: 'Order #48213 — Support', before: 'Thanks for your patience. Your order ', after: '' },
         rows: qiRoot(DT, RC, DEV), start: 1, script: [['key'], ['exec'], ['exec']] }] },
-    { id: 'files', tab: 'Files & Folders', cap: 'Copy a file in Finder (⌘C), then ⌥A within 15 seconds: its path, Reveal, or act on its folder.',
+    { id: 'files', tab: 'Files & Folders', cap: 'Copy a file in Finder (⌘C), then press ⌥A: its path, Reveal, or act on its folder.',
       samples: [{ ctx: ['Copied', 'Q4-report.pdf in Finder'], finder: true, label2: 'Copied File · Q4-report.pdf', groups: [['Copied File', 2], ['This Folder', 3]],
         rows: [{ t: 'Copy Path', s: 'doc.on.clipboard', toast: 'Clipboard now holds /Users/you/Documents/Reports/Q4-report.pdf', res: 'Copied · Path' }, { t: 'Reveal File', s: 'folder', toast: 'Finder reveals Q4-report.pdf', res: 'Shown in Finder' },
           { t: 'New File', s: 'doc.badge.plus', toast: 'A new file is created in Reports', res: 'File created' }, { t: 'Copy Folder Path', s: 'doc.on.clipboard', toast: 'Clipboard now holds /Users/you/Documents/Reports', res: 'Copied · Folder path' },
-          { t: 'Open Terminal Here', s: 'terminal', pro: true, toast: 'Terminal opens in ~/Documents/Reports', res: 'Terminal opened' }],
+          { t: 'Open Terminal Here', s: 'terminal', toast: 'Terminal opens in ~/Documents/Reports', res: 'Terminal opened' }],
         script: [['key'], ['exec']] }] },
-    { id: 'dev', tab: 'Developer', pro: true, cap: 'A fresh UUID or the current Unix timestamp at the cursor. Developer actions are Pro.',
+    { id: 'dev', tab: 'Developer', cap: 'A fresh UUID or the current Unix timestamp at the cursor. Unix Timestamp is Pro.',
       samples: [{ ctx: ['Context', 'Cursor in fixtures.ts'], doc: { app: 'fixtures.ts — Editor', mono: true, before: 'const order = {\n  id: "', after: '",\n  status: "open",\n};' },
         rows: qiRoot(DT, RC, DEV), start: 2, script: [['key'], ['exec'], ['exec']] }] }
   ];
@@ -874,16 +874,9 @@
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { ba.classList.add('is-on'); io.disconnect(); } }, { threshold: 0.6 });
     io.observe(ba);
   }
-  // Lens page: the four examples, with the owner's Free/Pro decisions for this page (the homepage fixtures are unchanged)
+  // Lens page: the four examples, playing once on its own page
   const lCard = $('[data-demo-lens-page]');
-  if (lCard) {
-    const FREE_ON_PAGE = new Set(['Open Terminal Here', 'UUID', 'Developer']), PRO_ON_PAGE = new Set(['Unix Timestamp']);
-    const fix = (rows) => rows.map((r) => Object.assign({}, r, FREE_ON_PAGE.has(r.t) ? { pro: false } : PRO_ON_PAGE.has(r.t) ? { pro: true } : {}, r.sub ? { sub: fix(r.sub) } : {}));
-    const CAPS = { files: 'Copy a file in Finder (⌘C), then press ⌥A: copy its path, reveal it, or act on its folder.',
-      dev: 'A fresh UUID or the current Unix timestamp at the cursor. Unix Timestamp is Pro.' };
-    const data = LENS.map((c) => Object.assign({}, c, { pro: false, cap: CAPS[c.id] || c.cap, samples: c.samples.map((x) => Object.assign({}, x, { rows: fix(x.rows) })) }));
-    window.__cliptikaLensPage = Demo(lCard, data, 'lens-x', { autoplay: true });
-  }
+  if (lCard) window.__cliptikaLensPage = Demo(lCard, LENS, 'lens-x', { autoplay: true });
   // Smart Paste page: a few real examples, Clean URL first
   const xCard = $('[data-demo-explore]');
   if (xCard) {
