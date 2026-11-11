@@ -564,3 +564,52 @@
 @media(max-width:760px){.cs-steps{grid-auto-rows:1fr}}
 .hm-viewport:has(>img.authentic)::after{display:none}   /* an authentic capture is shown whole, without the phone fade */
 @media(min-width:761px){.sc-stage .hud-lens{top:calc(50% + 10px)}}   /* desktop: the Lens panel clears the line it just inserted into */
+
+/* ===== Phones (max-width 760px): a short product story =====
+   .m-only exists only for phones; .d-only marks the desktop showcase that phones do not render. Nothing in this block
+   applies above 760px except hiding the new phone-only elements, so the approved desktop and tablet layouts are untouched. */
+.m-only{display:none!important}
+@media(max-width:760px){
+  .d-only{display:none!important}
+  .m-only{display:revert!important}
+  .hero h1.m-only{display:block!important}
+  .m-sec,.m-plans{display:block!important}
+  .m-sec{padding:28px 0;border-top:1px solid var(--border);scroll-margin-top:58px}
+  #free-pro{scroll-margin-top:58px}
+
+  /* hero: words only, readable at a glance */
+  .hero{padding:26px 0 28px}
+  .hero h1.m-only{font-size:clamp(2.2rem,10.4vw,3.1rem);line-height:1.04;letter-spacing:-.035em}
+  .hero h1.m-only span{white-space:normal}
+  .hero .hero-copy.m-only{font-size:1.06rem;line-height:1.5;color:var(--text2);margin:10px 0 8px;max-width:34ch}
+  .hero .chip.m-only{display:inline-block!important}
+
+  /* three benefits: icon + two lines, no interaction */
+  .mb-list,.mm-list{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+  .mb-list li,.mm-list li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start}
+  .mb-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent)}
+  .mb-ic .sym,.mb-ic .ic{width:22px;height:22px}
+  .mb-ic .ic .ic-primary{fill:currentColor}.mb-ic .ic .ic-secondary{fill:currentColor;opacity:.55}
+  .mb-ic .sym{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+  .mb-list h3,.mm-list h3{margin:1px 0 3px;font-size:1.02rem;line-height:1.3;letter-spacing:-.01em}
+  .mb-list p,.mm-list p{margin:0;color:var(--text2);font-size:.94rem;line-height:1.48}
+  .mm-list h3 kbd{font-size:.72em;margin-left:4px;vertical-align:2px}
+  .m-benefits{border-top:0;padding-top:4px}
+
+  /* the one interactive example */
+  .m-sec .section-head{margin-bottom:16px}
+  .m-sec .section-head h2{font-size:clamp(1.65rem,7.4vw,2.1rem)}
+  .m-demo .sc-card{scroll-margin-top:70px}
+  .m-demo .sc-tabs{display:none}
+  .m-note{margin:12px 2px 0;color:var(--text2);font-size:12.5px;line-height:1.45}
+  .m-note .sc-tag{margin-right:6px;vertical-align:1px}
+
+  /* Free and Pro, in two short cards */
+  .plans .section-head{margin-bottom:14px}
+  .m-plans{display:grid!important;gap:10px}
+  .mp-card{padding:16px 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+  .mp-card h3{margin:0 0 4px;font-size:1.08rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .mp-card p{margin:0;color:var(--text2);font-size:.94rem;line-height:1.48}
+  .mp-pro{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+  .mp-tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;font-weight:760;letter-spacing:.04em;text-transform:uppercase}
+}

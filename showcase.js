@@ -266,6 +266,7 @@
     tabsEl.innerHTML = data.map((c, i) => `<button class="sc-tab" role="tab" type="button" id="${kind}-tab-${c.id}" aria-selected="${i === 0}" aria-controls="${kind}-panel" tabindex="${i ? -1 : 0}">${esc(c.tab)}${c.pro ? ' <span class="pro">Pro</span>' : ''}</button>`).join('');
     const tabs = $$('.sc-tab', tabsEl);
     body.id = `${kind}-panel`; body.setAttribute('role', 'tabpanel');
+    if (data.length === 1) { tabsEl.hidden = true; body.removeAttribute('role'); }   // a single example (phones): no tab list to choose from
 
     const S = () => data[cat].samples[sample];
     const node = () => path.reduce((rows, i) => rows[i].sub, S().rows);           // rows of the open level
@@ -855,4 +856,27 @@
   hero();
   captureStack();
   window.__cliptikaDemos = $$('[data-demo]').map((el) => Demo(el, el.dataset.demo === 'lens' ? LENS : SP, el.dataset.demo));   // read by automated checks
+
+  /* ---------- phones (max-width 760px): one Smart Paste example in a short product story ----------
+     The desktop showcase, the menu bar hero and Capture Stack are display:none on phones, so their viewport-triggered
+     playback never starts there. This card is display:none above 760px for the same reason. */
+  $$('.m-sec [data-sym]').forEach((el) => { el.innerHTML = sym(el.dataset.sym, 'sym'); el.removeAttribute('data-sym'); });
+  const mCard = $('[data-demo-m]');
+  if (mCard) {
+    const links = SP.find((c) => c.id === 'links');
+    window.__cliptikaMobileDemo = Demo(mCard, [Object.assign({}, links, { id: 'links-m', tab: 'Clean URL',
+      cap: 'Clean URL removes the tracking and pastes only the link. Free, along with the other Smart Paste actions for text, lines and links.' })], 'smartpaste-m');
+  }
+  // the hero names itself by the heading that is on screen
+  const heroSec = $('[data-label-m]');
+  const heroLabel = () => { if (heroSec) heroSec.setAttribute('aria-labelledby', phone() ? heroSec.dataset.labelM : 'hero-title'); };
+  // links from Privacy, Support or older shares (index.html#lens …) land on the matching phone section, never on hidden content
+  const PHONE_TARGET = { 'smart-paste': 'm-smart-paste', showcase: 'm-smart-paste', lens: 'm-more', 'capture-stack': 'm-more', work: 'm-benefits' };
+  const phoneHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1)), to = phone() && PHONE_TARGET[id] && document.getElementById(PHONE_TARGET[id]);
+    if (to) requestAnimationFrame(() => to.scrollIntoView({ block: 'start', behavior: 'auto' }));
+  };
+  heroLabel(); phoneHash();
+  window.addEventListener('hashchange', phoneHash);
+  phoneQ.addEventListener('change', heroLabel);
 })();
