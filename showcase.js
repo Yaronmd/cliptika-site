@@ -883,7 +883,8 @@
   // the hero names itself by the heading that is on screen
   const heroSec = $('[data-label-m]');
   const heroLabel = () => { if (heroSec) heroSec.setAttribute('aria-labelledby', phone() ? heroSec.dataset.labelM : 'hero-title'); };
-  // links from Privacy, Support or older shares (index.html#lens …) land on the matching phone section, never on hidden content
+  // links from Privacy, Support or older shares (index.html#lens …) land on the matching phone section, never on hidden content.
+  // Temporary for lens and capture-stack: they point at the benefits until the Lens and Capture Stack pages exist.
   const PHONE_TARGET = { 'smart-paste': 'm-smart-paste', showcase: 'm-smart-paste', lens: 'm-benefits', 'capture-stack': 'm-benefits', download: 'free-pro', work: 'm-benefits' };
   const phoneHash = () => {
     const id = decodeURIComponent(location.hash.slice(1)), to = phone() && PHONE_TARGET[id] && document.getElementById(PHONE_TARGET[id]);

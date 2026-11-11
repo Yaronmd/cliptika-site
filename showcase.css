@@ -674,9 +674,9 @@
   .m-demo .section-head .eyebrow kbd{font-size:.95em;text-transform:none;letter-spacing:0;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 35%,var(--border))}
   .m-ba{margin:0;display:grid;gap:8px}
   .ba-box{padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
-  .ba-after{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+  .mba-after{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
   .ba-l{margin:0 0 4px;color:var(--text3);font-size:11px;font-weight:720;letter-spacing:.06em;text-transform:uppercase}
-  .ba-after .ba-l{color:var(--accent)}
+  .mba-after .ba-l{color:var(--accent)}
   .ba-url{margin:0;font:500 13.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text);overflow-wrap:break-word}
   .ba-url del{color:var(--text3);text-decoration:line-through;text-decoration-color:#e5484d;text-decoration-thickness:1.5px}
   .ba-mid{margin:0;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:13px;font-weight:650}
@@ -687,12 +687,34 @@
   .m-ba figcaption kbd{font-size:.8em}
   /* one transition when it scrolls into view: the tracking is struck, then the clean link lands */
   .m-ba.is-ready .ba-url del{text-decoration-color:transparent;color:var(--text);transition:color .5s ease .2s,text-decoration-color .5s ease .2s}
-  .m-ba.is-ready .ba-mid,.m-ba.is-ready .ba-after{opacity:0;transform:translateY(-6px);transition:opacity .45s ease,transform .45s ease}
-  .m-ba.is-ready .ba-mid{transition-delay:.7s}.m-ba.is-ready .ba-after{transition-delay:1s}
+  .m-ba.is-ready .ba-mid,.m-ba.is-ready .mba-after{opacity:0;transform:translateY(-6px);transition:opacity .45s ease,transform .45s ease}
+  .m-ba.is-ready .ba-mid{transition-delay:.7s}.m-ba.is-ready .mba-after{transition-delay:1s}
   .m-ba.is-on .ba-url del{text-decoration-color:#e5484d;color:var(--text3)}
-  .m-ba.is-on .ba-mid,.m-ba.is-on .ba-after{opacity:1;transform:none}
+  .m-ba.is-on .ba-mid,.m-ba.is-on .mba-after{opacity:1;transform:none}
   .m-explore-row{margin-top:10px}
   .mp-card ul{margin:2px 0 0;padding-left:18px;display:grid;gap:4px;color:var(--text2);font-size:.94rem;line-height:1.45}
   .mp-sub{margin:0 0 6px!important;color:var(--text)!important;font-weight:600}
 }
 @media(max-width:760px) and (prefers-reduced-motion:reduce){.m-ba *{transition:none!important}}
+
+/* ===== Phones, round 4: the Clean URL example as one compact card ===== */
+@media(max-width:760px){
+  .m-ba{gap:0}
+  .mba-card{border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:16px;background:var(--surface);overflow:hidden}
+  .mba-row{padding:10px 14px}
+  .mba-row+.mba-row{border-top:1px solid var(--border)}
+  .mba-after{background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+  .ba-l{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 2px;font-size:10.5px}
+  .ba-l kbd{font-size:11px;padding:.1em .4em;text-transform:none;letter-spacing:0}
+  .ba-act{padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;letter-spacing:.04em}
+  .ba-url{font-size:13px;line-height:1.45}
+  .m-ba figcaption{margin:8px 2px 0;font-size:.92rem}
+  .m-explore-row{margin-top:4px}
+  .m-demo .section-head{margin-bottom:12px}
+  /* the one transition: the tracking is struck, then the clean link lands */
+  .m-ba.is-ready .mba-after{transform:none}
+}
+@media(max-width:760px){
+  .m-ba figcaption{margin:6px 2px 0}
+  .m-explore-row{margin-top:0}
+}
