@@ -718,7 +718,7 @@
       main.hidden = true; browser.hidden = false; cap.textContent = `${n}: click an item to copy it.`;
       $('[data-bback]', browser).addEventListener('click', closeCol); wireCopy(browser);
     }
-    function closeCol() { browser.hidden = true; main.hidden = false; cap.textContent = 'Everything you copy and save, one click away in the menu bar.'; }
+    function closeCol() { browser.hidden = true; main.hidden = false; cap.textContent = 'Recent copies, pins and Collections, one click away.'; }
     function copied(btn) { btn.classList.remove('is-copied'); void btn.offsetWidth; btn.classList.add('is-copied'); setTimeout(() => btn.classList.remove('is-copied'), 1100); cap.textContent = `Copied “${btn.querySelector('.mtx').textContent}”. The window stays open.`; }
     function wireCopy(scope) { $$('[data-copy]', scope).forEach((b) => b.addEventListener('click', () => { stopAuto(); copied(b); })); }
     $$('[data-col]', root).forEach((b) => b.addEventListener('click', () => { stopAuto(); openCol(+b.dataset.col); }));

@@ -761,3 +761,6 @@
   .m-demo{padding-bottom:22px}
 }
 @media(max-width:360px){.mf-row{gap:10px;padding-inline:12px}.mf-t small{font-size:.82rem}}
+
+/* desktop headline breaks after each sentence; tablet widths keep one flowing line */
+@media(max-width:1020px){#hero-title br{display:none}}
