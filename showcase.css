@@ -718,3 +718,25 @@
   .m-ba figcaption{margin:6px 2px 0}
   .m-explore-row{margin-top:0}
 }
+
+/* ===== Phones: the hero crop starts at the menu bar's status area (Finder's menus would be cut mid-word) ===== */
+@media(max-width:760px){.hm-viewport.is-mini .hm-bar>b,.hm-viewport.is-mini .hm-bar>span:not(.hm-right){visibility:hidden}}
+
+/* ===== Feature pages (.xp-page): shared pieces ===== */
+.xp-page .mp-tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;font-weight:760;letter-spacing:.04em;text-transform:uppercase;vertical-align:2px}
+.xp-page .xp-group kbd{font-size:.8em}
+.xp-page .xp-more{padding-block:clamp(26px,3.6vw,40px)}
+.xp-page .xp-more h2.eyebrow{font-size:12px;letter-spacing:.06em;margin:0 0 12px}
+.xp-page .xp-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.xp-page .xp-more-card{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;padding:16px 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .2s ease}
+.xp-page .xp-more-card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+.xp-page .xp-more-card strong{display:block;font-size:1.02rem;margin:1px 0 3px}
+.xp-page .xp-more-card strong span{color:var(--accent)}
+.xp-page .xp-more-card small{display:block;color:var(--text2);font-size:.92rem;line-height:1.45}
+.xp-page .mb-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent)}
+.xp-page .mb-ic .ic,.xp-page .mb-ic .sym{width:22px;height:22px}
+.xp-page .mb-ic .ic .ic-primary{fill:currentColor}.xp-page .mb-ic .ic .ic-secondary{fill:currentColor;opacity:.55}
+.xp-page .mb-ic .sym{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.xp-page .xp-cs .cs-card{max-width:1080px;margin-inline:auto}
+@media(max-width:760px){.xp-page .xp-more-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.xp-page .xp-more-card{transition:none}}

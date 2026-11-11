@@ -254,8 +254,8 @@
     replay: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M2.6 2.2v2.9h2.9"/></svg>'
   };
 
-  function Demo(root, data, kind) {
-    const lens = kind === 'lens';
+  function Demo(root, data, kind, opts = {}) {
+    const lens = kind === 'lens' || kind === 'lens-x';
     const TITLE = lens ? 'Cliptika Lens' : 'Smart Paste', KEY = lens ? 'A' : 'V';
     const tabsEl = $('[data-demo-tabs]', root), body = $('[data-demo-body]', root), capEl = $('[data-demo-cap]', root), extra = $('[data-demo-extra]', root);
     let cat = 0, sample = 0, open = true, path = [], sel = 0, tr = {}, played = false;
@@ -662,7 +662,7 @@
       if (!v) { if (mode === 'playing') pause(); return; }
       if (!played) {
         played = true;
-        if (lens || calm() || (coordinator.active && coordinator.active !== self && coordinator.active.playing)) return;   // Lens rests until touched
+        if ((lens && !opts.autoplay) || calm() || (coordinator.active && coordinator.active !== self && coordinator.active.playing)) return;   // Lens rests until touched
         coordinator.activate(self); demoOnce();
       }
     }, 0.45);
@@ -784,7 +784,7 @@
       [2200, 3, { press: true, label: 'Clipboard', out: () => shot(3), done: false }],      // Combine   5.0 s: the press, then the result
       [1000, 3, {}]
     ];
-    const HOLD = 4000;
+    const HOLD = 4000, PACE_K = root.dataset.csPace === 'quick' ? 0.55 : 1;   // the Capture Stack page plays a quicker pass
     let step = 0, timer = null, mode = 'idle', frame = 0, offscreen = false;
     const rowsByKey = {};
     function renderRows(order, selected) {
@@ -829,7 +829,7 @@
       if (mode !== 'playing' || offscreen) return;
       if (frame >= FRAMES.length) { timer = setTimeout(() => { mode = 'idle'; bar(); }, HOLD); return; }
       const [wait, k, partial] = FRAMES[frame];
-      timer = setTimeout(() => { frame += 1; show(k, false, partial); tick(); }, wait);
+      timer = setTimeout(() => { frame += 1; show(k, false, partial); tick(); }, wait * PACE_K);
     }
     function start() { started = true; coordinator.activate(self); frame = 0; mode = 'playing'; bar(); tick(); }
     function stopAuto() { clearTimeout(timer); mode = 'idle'; bar(); }
@@ -866,13 +866,23 @@
   /* ---------- phones (max-width 760px): one Smart Paste example in a short product story ----------
      The desktop showcase, the menu bar hero and Capture Stack are display:none on phones, so their viewport-triggered
      playback never starts there. This card is display:none above 760px for the same reason. */
-  $$('.m-sec [data-sym]').forEach((el) => { el.innerHTML = sym(el.dataset.sym, 'sym'); el.removeAttribute('data-sym'); });
+  $$('.m-sec [data-sym], .xp-more [data-sym]').forEach((el) => { el.innerHTML = sym(el.dataset.sym, 'sym'); el.removeAttribute('data-sym'); });
   // phones: the Clean URL before → after plays its one transition when it scrolls into view (or rests finished)
   const ba = $('[data-ba]');
   if (ba && !calm() && 'IntersectionObserver' in window) {
     ba.classList.add('is-ready');
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { ba.classList.add('is-on'); io.disconnect(); } }, { threshold: 0.6 });
     io.observe(ba);
+  }
+  // Lens page: the four examples, with the owner's Free/Pro decisions for this page (the homepage fixtures are unchanged)
+  const lCard = $('[data-demo-lens-page]');
+  if (lCard) {
+    const FREE_ON_PAGE = new Set(['Open Terminal Here', 'UUID', 'Developer']), PRO_ON_PAGE = new Set(['Unix Timestamp']);
+    const fix = (rows) => rows.map((r) => Object.assign({}, r, FREE_ON_PAGE.has(r.t) ? { pro: false } : PRO_ON_PAGE.has(r.t) ? { pro: true } : {}, r.sub ? { sub: fix(r.sub) } : {}));
+    const CAPS = { files: 'Copy a file in Finder (⌘C), then press ⌥A: copy its path, reveal it, or act on its folder.',
+      dev: 'A fresh UUID or the current Unix timestamp at the cursor. Unix Timestamp is Pro.' };
+    const data = LENS.map((c) => Object.assign({}, c, { pro: false, cap: CAPS[c.id] || c.cap, samples: c.samples.map((x) => Object.assign({}, x, { rows: fix(x.rows) })) }));
+    window.__cliptikaLensPage = Demo(lCard, data, 'lens-x', { autoplay: true });
   }
   // Smart Paste page: a few real examples, Clean URL first
   const xCard = $('[data-demo-explore]');
@@ -883,11 +893,14 @@
   // the hero names itself by the heading that is on screen
   const heroSec = $('[data-label-m]');
   const heroLabel = () => { if (heroSec) heroSec.setAttribute('aria-labelledby', phone() ? heroSec.dataset.labelM : 'hero-title'); };
-  // links from Privacy, Support or older shares (index.html#lens …) land on the matching phone section, never on hidden content.
-  // Temporary for lens and capture-stack: they point at the benefits until the Lens and Capture Stack pages exist.
-  const PHONE_TARGET = { 'smart-paste': 'm-smart-paste', showcase: 'm-smart-paste', lens: 'm-benefits', 'capture-stack': 'm-benefits', download: 'free-pro', work: 'm-benefits' };
+  // Site links go straight to the feature pages. Only old shared links to homepage sections need a hand on phones,
+  // where those sections are not shown: feature sections open their pages, the rest land on the matching phone section.
+  const PHONE_PAGE = { 'smart-paste': 'smart-paste.html', lens: 'lens.html', 'capture-stack': 'capture-stack.html' };
+  const PHONE_TARGET = { showcase: 'm-smart-paste', download: 'free-pro', work: 'm-benefits' };
   const phoneHash = () => {
-    const id = decodeURIComponent(location.hash.slice(1)), to = phone() && PHONE_TARGET[id] && document.getElementById(PHONE_TARGET[id]);
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (phone() && heroSec && PHONE_PAGE[id]) { location.replace(PHONE_PAGE[id]); return; }
+    const to = phone() && PHONE_TARGET[id] && document.getElementById(PHONE_TARGET[id]);
     if (to) requestAnimationFrame(() => to.scrollIntoView({ block: 'start', behavior: 'auto' }));
   };
   heroLabel(); phoneHash();
