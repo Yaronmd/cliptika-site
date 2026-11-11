@@ -764,3 +764,4 @@
 
 /* desktop headline breaks after each sentence; tablet widths keep one flowing line */
 @media(max-width:1020px){#hero-title br{display:none}}
+@media(max-width:760px){.hero h1.m-only{align-self:stretch}}   /* the short sentence lines keep the headline on the left edge */
