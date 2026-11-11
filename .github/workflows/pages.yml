@@ -25,7 +25,7 @@ jobs:
           mkdir _site
           cp index.html privacy.html support.html smart-paste.html lens.html capture-stack.html style.css site.css showcase.css script.js site.js showcase.js favicon.png robots.txt sitemap.xml .nojekyll _site/
           rsync -a --exclude '*.md' assets/ _site/assets/
-          test -f _site/assets/og/cliptika-og.png
+          test -f _site/assets/og/cliptika-og-v2.png
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
