@@ -769,3 +769,38 @@
 @media(min-width:1021px){.hero h1.d-only{font-size:clamp(2.35rem,5.4vw,4.6rem)}}
 @media(max-width:760px){.hero h1.m-only{align-self:stretch;font-size:clamp(1.5rem,calc(8.6vw - 3px),2.9rem)}}
 #fp-heading .nw{white-space:nowrap}   /* the Free / Pro heading breaks between phrases, never inside one */
+
+/* ===== Smart Paste page: "Screenshots? Paste them your way." (Recent Images), under the four examples ===== */
+.xp-page .xps{margin-top:20px;padding:18px 20px 16px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.xp-page .xps-h h3{margin:0;font-size:1.1rem;letter-spacing:-.01em;text-wrap:balance}
+.xp-page .xps-h p{margin:4px 0 0;color:var(--text2);font-size:.95rem;line-height:1.45}
+.xp-page .xps-h kbd{font-size:.8em}
+.xp-page .xps-opts{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.xp-page .xps-opts li{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;padding:12px 8px 11px;border-radius:12px;background:var(--surface2)}
+.xp-page .xps-viz{display:grid;place-items:center;width:100%;height:104px;margin-bottom:8px}
+.xp-page .xps-viz>.mini-shot{max-width:100%}
+.xp-page .xps-viz>.mini-shot{width:112px}
+.xp-page .xps-viz .out-imgs.is-combined{gap:2px;padding:3px}
+.xp-page .xps-viz .out-imgs .mini-shot{width:48px;padding:2px}
+.xp-page .xps-sep{display:flex;gap:5px}
+.xp-page .xps-sep .mini-shot{width:44px;padding:2px}
+.xp-page .xps-viz .mini-shot:not(:only-child) i{height:2px}
+.xp-page .xps-opts strong{font-size:.93rem;line-height:1.25}
+.xp-page .xps-opts small{margin-top:2px;color:var(--text2);font-size:.82rem;line-height:1.35}
+.xp-page .xps-fine{margin:12px 2px 0;color:var(--text2);font-size:13px;line-height:1.45}
+.xp-page .xps-fine .sc-tag{margin-right:6px;vertical-align:1px}
+@media(max-width:760px){
+  .xp-page .xps{margin-top:16px;padding:14px 14px 12px}
+  .xp-page .xps-opts{gap:6px;margin-top:12px}
+  .xp-page .xps-opts li{padding:10px 4px 9px}
+  .xp-page .xps-viz{height:76px;margin-bottom:6px}
+  .xp-page .xps-viz>.mini-shot{width:80px}
+  .xp-page .xps-viz>.mini-shot b{font-size:7.5px}
+  .xp-page .xps-viz .out-imgs .mini-shot{width:34px}
+  .xp-page .xps-sep{gap:3px}
+  .xp-page .xps-sep .mini-shot{width:clamp(22px,7.6vw,30px);padding:1px}
+  .xp-page .xps-viz .mini-shot:not(:only-child) i{display:none}
+  .xp-page .xps-opts strong{font-size:.8rem}
+  .xp-page .xps-opts small{font-size:.72rem}
+}
+@media(max-width:359px){.xp-page .xps-viz>.mini-shot{width:62px}.xp-page .xps-viz>.mini-shot b{font-size:6.5px}.xp-page .xps-sep{gap:2px}.xp-page .xps-sep .mini-shot{width:20px}}
