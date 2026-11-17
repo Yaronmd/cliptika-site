@@ -2,15 +2,15 @@
 
 Static HTML deployed by the GitHub Pages Actions workflow. This repository does not contain the Mac app.
 
-## Website analytics setup
+## Activate page-view tracking before the App Store launch
 
-Analytics is disabled until both GitHub Actions variables are configured. Create a free [Umami Cloud Hobby account](https://cloud.umami.is/signup?plan=hobby), choose the data region, add a website for `cliptika.app`, and open its settings → Tracking code. Copy the website ID and the script URL from that code. In GitHub, open Settings → Secrets and variables → Actions → Variables and set `UMAMI_WEBSITE_ID` and `UMAMI_SCRIPT_URL`. These values appear in the public website and are not secrets; never put API keys or credentials here. Confirm the GitHub Pages source is Actions and deploy only after owner approval. An empty variable leaves tracking off. The tracker loads only on cliptika.app and www.cliptika.app. Local files, previews and other domains do not send production traffic.
+Analytics is disabled until both GitHub Actions variables are configured. Create a free [Umami Cloud Hobby account](https://cloud.umami.is/signup?plan=hobby), choose the data region, add a website for `cliptika.app`, and open its settings → Tracking code. Copy the website ID and the script URL from that code. In GitHub, open Settings → Secrets and variables → Actions → Variables and set `UMAMI_WEBSITE_ID` and `UMAMI_SCRIPT_URL`. These values appear in the public website and are not secrets; never put API keys or credentials here. Page views can be enabled before the App Store listing exists: after the PR is approved, confirm the GitHub Pages source is Actions, set both variables, and deploy the approved site only with owner approval. Once deployed, visit cliptika.app and check Umami → Websites → Cliptika → Overview or Realtime for the page view. An empty variable leaves tracking off. The tracker loads only on cliptika.app and www.cliptika.app. Local files, previews and other domains do not send production traffic.
 
 The Hobby plan's limits and retention can change; see [pricing](https://umami.is/pricing). Each page view, event and event property consumes usage. Verify the account's retention and region and review the privacy disclosure before enabling. Do not put personal information into campaign URLs. Umami may collect URLs, referrers and UTM values; it processes IP addresses to create anonymous rotating identifiers. Do Not Track is honored where supported. Analytics may be blocked by browsers and is an estimate.
 
 ## App Store launch checklist
 
-There are currently no App Store links; the site says “Coming soon.” Once the official listing exists, replace the appropriate launch CTAs with ordinary direct links to that exact listing. On each link use the following attributes, with placement one of `hero`, `navigation`, `pricing`, or `footer`:
+**CTA tracking: NOT TESTED.** There are currently zero App Store links; the site says “Coming soon.” Integration remains pending until the official listing URL exists. Once the official listing exists, replace the appropriate launch CTAs with ordinary direct links to that exact listing. On each link use the following attributes, with placement one of `hero`, `navigation`, `pricing`, or `footer`:
 
 ```html
 <a href="OFFICIAL_APP_STORE_URL" data-umami-event="app_store_click" data-umami-event-placement="hero">Download on the Mac App Store</a>
@@ -26,4 +26,4 @@ For the requested conversion measure, define a website visitor session as an Uma
 
 ## Validation
 
-Run `python3 tests/check_analytics.py` and `node tests/analytics-loader.test.js`. Before launch, use a test Umami website and an authorized preview hostname (temporarily adjusted in a local test copy, never production config) to confirm one page view and one event with the expected placement for every CTA. Verify the official direct destinations, mobile layout, privacy wording and absence of duplicate tracking before owner-approved deployment.
+Run `python3 tests/check_analytics.py` and `node tests/analytics-loader.test.js`. Validate page views independently before the App Store launch. Once official CTAs exist, use a test Umami website and an authorized preview hostname (temporarily adjusted in a local test copy, never production config) to confirm one event with the expected placement for every CTA. Verify the official direct destinations, mobile layout, privacy wording and absence of duplicate tracking before owner-approved deployment.
